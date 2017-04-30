@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block pageTitle %}Nuevo cliente{%endblock%}
+
+{% block pageContent %}
+<div class="container">
+	<div>
+		<form class="col s12" action="/newCustomer" method="POST">
+			<div class="row">
+					<div class="row">
+						Nuevo cliente
+					</div>
+
+					<div class="row">
+						{% for fillableField in fillableFields %}
+							<div class="input-field col s12">
+								<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}">
+								<label for="{{fillableField['fieldName']}}">{{fillableField['fieldName']}}</label>
+							</div>
+						{% endfor %}
+					</div>
+			</div>
+
+			<div>
+				<a href="#!" class="waves-effect waves-green btn-flat"><input type="submit" name="submit"></a>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}
