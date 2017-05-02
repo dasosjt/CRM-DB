@@ -50,11 +50,15 @@
 								</div>
 							{% else %}
 								<div class="input-field col s12">
-									<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}">
+									<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}" required>
 									<label for="{{fillableField['fieldName']}}">{{fillableField['fieldName']}}</label>
 								</div>
 							{% endif %}
 						{% endfor %}
+						<!-- <div class="input-field col s2">
+							<input type="date" class="datepicker" name="Test">
+							<label for="Test">Test</label>
+						</div> -->
 					</div>
 			</div>
 
@@ -68,12 +72,12 @@
 	</div>
 </div>
 
-<script>
-	$(document).ready(function(){
-		$('.datepicker').pickadate({
-			selectMonths: true, // Creates a dropdown to control month
-			selectYears: 100 // Creates a dropdown of 15 years to control year
+<!-- 	<script>
+		$(document).ready(function(){
+			$('.datepicker').pickadate({
+				selectMonths: true, // Creates a dropdown to control month
+				selectYears: 100 // Creates a dropdown of 15 years to control year
+			});
 		});
-	});
-</script>
+	</script> -->
 {% endblock %}

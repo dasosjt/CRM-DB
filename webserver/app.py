@@ -28,6 +28,7 @@ def newCustomer():
 
 		# Store to DB - Casting may be necessary, as all the data comes in unicode - TODO
 		# Return success of fail feedback, and redirect user to a convenient view - TODO
+		return redirect('/')
 
 @app.route('/searchCustomer', methods=['GET', 'POST'])
 def searchCustomer():
@@ -69,10 +70,24 @@ def searchCustomer():
 def searchCustomerResults():
 	return render_template('searchCustomerResults.html')
 
-@app.route('/newField')
+@app.route('/newField', methods=['GET', 'POST'])
 def newField():
-	return render_template('newField.html')
+	if request.method == 'GET':
+		return render_template('newField.html')
+	elif request.method == 'POST':
+		newFieldName = request.form['newFieldName']
+		newFieldType = request.form['newFieldType']
+
+		# Field type 1 corresponds to text
+		# Field type 2 corresponds to integer
+		# Field type 3 corresponds to float
+		# Field type 4 corresponds to date
+		print("Create field: "+newFieldName+" with type: "+newFieldType)
+		#Create field
+
+		return redirect('/')
+
 
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', debug=True, port=80)
+	app.run(host='0.0.0.0', debug=True, port=8080)
