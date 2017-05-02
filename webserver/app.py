@@ -15,34 +15,18 @@ def newCustomer():
 
 
 	elif request.method == 'POST':
-		#Get values from form
-		firstName = request.form['firstName']
-		lastName = request.form['lastName']
-		twitterUsername = request.form['twitterUsername']
-		startDate = request.form['startDate']
-		address = request.form['address']
-		email = request.form['email']
-		nit = request.form['nit']
-		office = request.form['office']
-		contract = request.form['contract']
-		state = request.form['state']
-		clientType = request.form['clientType']
+		# Processing the insert
+		for field in request.form:
+			# For each field in the form
+			if (field != 'action'):
+				#If the field isn't the submit button
 
-		#Store to DB - Casting may be necessary, as all the data comes in unicode - TODO
-		# print(
-		# 	str(firstName) + " --TYPE: " + str(type(firstName)) + "\n" +
-		# 	str(lastName) + " --TYPE: " + str(type(lastName)) + "\n" +
-		# 	str(twitterUsername) + " --TYPE: " + str(type(twitterUsername)) + "\n" +
-		# 	str(startDate) + " --TYPE: " + str(type(startDate)) + "\n" +
-		# 	str(address) + " --TYPE: " + str(type(address)) + "\n" +
-		# 	str(email) + " --TYPE: " + str(type(email)) + "\n" +
-		# 	str(nit) + " --TYPE: " + str(type(nit)) + "\n" +
-		# 	str(office) + " --TYPE: " + str(type(office)) + "\n" +
-		# 	str(contract) + " --TYPE: " + str(type(contract)) + "\n" +
-		# 	str(state) + " --TYPE: " + str(type(state)) + "\n" +
-		# 	str(clientType) + " --TYPE: " + str(type(clientType)) + "\n"
-		# )
+				fieldName = field
+				fieldValue = request.form[field]
 
+				# print(fieldName + " has to be inserted with value: " + fieldValue)
+
+		# Store to DB - Casting may be necessary, as all the data comes in unicode - TODO
 		# Return success of fail feedback, and redirect user to a convenient view - TODO
 
 @app.route('/searchCustomer', methods=['GET', 'POST'])
@@ -57,8 +41,9 @@ def searchCustomer():
 	elif request.method == 'POST':
 		# Processing the filter
 		for field in request.form:
+			print(field)
 			#For each field in the form
-			if (field != 'submit') and ("_comparisonType" not in field):
+			if (field != 'action') and ("_comparisonType" not in field):
 				#If the field isn't the submit button or a comparison type descriptor
 
 				# Each field with its filter value should be arranged in a SQL query to get all the matching customers.
@@ -74,6 +59,12 @@ def searchCustomer():
 				fieldComparisonType = request.form[field+"_comparisonType"]
 
 				# print(fieldName + " has to be filtered with value: " + fieldValue + " applying comparison " + fieldComparisonType)
+
+		return redirect("/searchCustomerResults")
+
+@app.route('/searchCustomerResults')
+def searchCustomerResults():
+	return render_template('searchCustomerResults.html')
 
 
 
