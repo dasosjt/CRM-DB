@@ -1,6 +1,12 @@
 from flask import Flask, render_template, request, Markup, session, redirect, g, url_for
 app = Flask(__name__)
 
+import funciones
+import sys
+import psycopg2
+conn_string = "host='localhost' dbname='proyecto2' user='postgres' password='password'"
+conn = psycopg2.connect(conn_string)
+
 @app.route('/')
 def homePage():
 	return render_template('base.html')
@@ -10,12 +16,26 @@ def newCustomer():
 	if request.method == 'GET':
 		# fillableFields should be filled with the fields of the customers table in the DB, 
 		# note that each field requires a fieldName and a fieldType, to provide a form accordingly to the types. Here's an example:
-		fillableFields = [{'fieldName': "oficina", 'fieldType': "text"}, {'fieldName': "field1", 'fieldType': "text"}, {'fieldName': "contrato", 'fieldType': "text"}, {'fieldName': "field3", 'fieldType': "date"}]
+		#fillableFields = [{'fieldName': "oficina", 'fieldType': "text"}, {'fieldName': "field1", 'fieldType': "text"}, {'fieldName': "contrato", 'fieldType': "text"}, {'fieldName': "field3", 'fieldType': "date"}]
+		fillableFields = [{'fieldName': "Nombre", 'fieldType': "text"}]
+		fillableFields.append({'fieldName': "Apellido", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "Fecha inicio", 'fieldType': "date"})
+		fillableFields.append({'fieldName': "Domicilio", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "Correo", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "NIT", 'fieldType': "text"})
+		
+		fillableFields.append({'fieldName': "oficina", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "contrato", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "estado", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
 		return render_template('newCustomer.html', fillableFields=fillableFields)
 
 
 	elif request.method == 'POST':
 		# Processing the insert
+		valores = []
+		campos = []
 		for field in request.form:
 			# For each field in the form
 			if (field != 'action'):
@@ -23,10 +43,13 @@ def newCustomer():
 
 				fieldName = field
 				fieldValue = request.form[field]
+				campos.append(field.lower().replace(" ","_"))
+				valores.append(fieldValue)
 
-				print(fieldName + " has to be inserted with value: " + fieldValue)
+				print(fieldName + " has to be inserted with val: " + fieldValue)
 
 		# Store to DB - Casting may be necessary, as all the data comes in unicode - TODO
+		print funciones.InsertarCliente(conn, valores, campos)
 		# Return success of fail feedback, and redirect user to a convenient view - TODO
 		return redirect('/')
 
