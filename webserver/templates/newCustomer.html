@@ -12,10 +12,48 @@
 
 					<div class="row">
 						{% for fillableField in fillableFields %}
-							<div class="input-field col s12">
-								<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}">
-								<label for="{{fillableField['fieldName']}}">{{fillableField['fieldName']}}</label>
-							</div>
+							{% if fillableField['fieldName'] == "oficina" %}
+								<div class="input-field col s12">
+									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
+										<option value="1">Zona 10 Guatemala</option>
+										<option value="2">Zona 14 Guatemala</option>
+										<option value="3">Zona 16 Guatemala</option>
+									</select>
+									<label>Oficina</label>
+								</div>
+							{% elif fillableField['fieldName'] == "contrato" %}
+								<div class="input-field col s12">
+									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
+										<option value="1">Anual</option>
+										<option value="2">Mensual</option>
+										<option value="3">Permanente</option>
+									</select>
+									<label>Contrato</label>
+								</div>
+							{% elif fillableField['fieldName'] == "estado" %}
+								<div class="input-field col s12">
+									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
+										<option value="1">Activo</option>
+										<option value="2">Inactivo</option>
+										<option value="3">Terminado</option>
+									</select>
+									<label>Estado</label>
+								</div>
+							{% elif fillableField['fieldName'] == "tipo_cliente" %}
+								<div class="input-field col s12">
+									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
+										<option value="1">Regular</option>
+										<option value="2">Familiar</option>
+										<option value="3">Asociado</option>
+									</select>
+									<label>Tipo de cliente</label>
+								</div>
+							{% else %}
+								<div class="input-field col s12">
+									<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}">
+									<label for="{{fillableField['fieldName']}}">{{fillableField['fieldName']}}</label>
+								</div>
+							{% endif %}
 						{% endfor %}
 					</div>
 			</div>

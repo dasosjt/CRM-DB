@@ -10,7 +10,7 @@ def newCustomer():
 	if request.method == 'GET':
 		# fillableFields should be filled with the fields of the customers table in the DB, 
 		# note that each field requires a fieldName and a fieldType, to provide a form accordingly to the types. Here's an example:
-		fillableFields = [{'fieldName': "field1", 'fieldType': "text"}, {'fieldName': "field2", 'fieldType': "date"}, {'fieldName': "field3", 'fieldType': "text"}]
+		fillableFields = [{'fieldName': "oficina", 'fieldType': "text"}, {'fieldName': "field1", 'fieldType': "text"}, {'fieldName': "contrato", 'fieldType': "text"}, {'fieldName': "field3", 'fieldType': "date"}]
 		return render_template('newCustomer.html', fillableFields=fillableFields)
 
 
@@ -24,7 +24,7 @@ def newCustomer():
 				fieldName = field
 				fieldValue = request.form[field]
 
-				# print(fieldName + " has to be inserted with value: " + fieldValue)
+				print(fieldName + " has to be inserted with value: " + fieldValue)
 
 		# Store to DB - Casting may be necessary, as all the data comes in unicode - TODO
 		# Return success of fail feedback, and redirect user to a convenient view - TODO
@@ -34,7 +34,7 @@ def searchCustomer():
 	if request.method == 'GET':
 		# filterableFields should be filled with the fields of the customers table in the DB, 
 		# note that each field requires a fieldName and a fieldType, to provide a form accordingly to the types. Here's an example:
-		filterableFields = [{'fieldName': "field1", 'fieldType': "text"}, {'fieldName': "field2", 'fieldType': "date"}, {'fieldName': "field3", 'fieldType': "text"}]
+		filterableFields = [{'fieldName': "contrato", 'fieldType': "text"}, {'fieldName': "field2", 'fieldType': "date"}, {'fieldName': "field3", 'fieldType': "text"}]
 		return render_template('searchCustomer.html', filterableFields=filterableFields)
 
 
@@ -56,9 +56,12 @@ def searchCustomer():
 
 				fieldName = field
 				fieldValue = request.form[field]
-				fieldComparisonType = request.form[field+"_comparisonType"]
+				if (fieldName == 'oficina') or (fieldName == 'contrato') or (fieldName == 'estado') or (fieldName == 'tipo_cliente'):
+					fieldComparisonType = '1'
+				else:
+					fieldComparisonType = request.form[field+"_comparisonType"]
 
-				# print(fieldName + " has to be filtered with value: " + fieldValue + " applying comparison " + fieldComparisonType)
+				print(fieldName + " has to be filtered with value: " + fieldValue + " applying comparison " + fieldComparisonType)
 
 		return redirect("/searchCustomerResults")
 
@@ -66,7 +69,9 @@ def searchCustomer():
 def searchCustomerResults():
 	return render_template('searchCustomerResults.html')
 
-
+@app.route('/newField')
+def newField():
+	return render_template('newField.html')
 
 
 if __name__ == '__main__':
