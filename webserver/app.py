@@ -1,10 +1,17 @@
+import os
+#from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = os.getcwd()+'/images/'
+ALLOWED_EXTENSIONS = set(['jpg', 'png', 'jpeg'])
+
 from flask import Flask, render_template, request, Markup, session, redirect, g, url_for
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 import funciones
 import sys
 import psycopg2
-conn_string = "host='localhost' dbname='proyecto2' user='postgres' password='password'"
+conn_string = "host='localhost' dbname='proyecto2' user='postgres' password=''"
 conn = psycopg2.connect(conn_string)
 
 @app.route('/')
@@ -29,6 +36,7 @@ def newCustomer():
 		fillableFields.append({'fieldName': "estado", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
+                fillableFields.append({'fieldName': "Imagen de Perfil", 'fieldType': "file"})
 		return render_template('newCustomer.html', fillableFields=fillableFields)
 
 
@@ -40,15 +48,22 @@ def newCustomer():
 			# For each field in the form
 			if (field != 'action'):
 				#If the field isn't the submit button
-
+                                
 				fieldName = field
 				fieldValue = request.form[field]
 				campos.append(field.lower().replace(" ","_"))
 				valores.append(fieldValue)
-
+                                
 				print(fieldName + " has to be inserted with val: " + fieldValue)
+                
+                image_info = request.files['Imagen de Perfil']
+                # TODO When some client is deleted, notify server to delete the image name. Maybe a good trigger.
+                image_info.save(UPLOAD_FOLDER+image_info.filename)
 
-		# Store to DB - Casting may be necessary, as all the data comes in unicode - TODO
+                campos.append("imagen_de_perfil")
+                valores.append(image_info.filename)
+
+                # Store to DB - Casting may be necessary, as all the data comes in unicode -R: The casting is done in postgres in the Insert
 		print funciones.InsertarCliente(conn, valores, campos)
 		# Return success of fail feedback, and redirect user to a convenient view - TODO
 		return redirect('/')

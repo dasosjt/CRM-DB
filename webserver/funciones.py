@@ -11,17 +11,22 @@ def InsertarCliente(conn, valores, campos):
 		id_cliente = records[len(records)-1][0]+1
 	query = "INSERT INTO clientes ( id_cliente , "
 	
+        contador_campos = 0
 	for campo in campos:
-		query+= ""+str(campo) + ""
-		if(campo != campos[len(campos)-1]):
-			query += " , "
+                contador_campos += 1
+		query += str(campo)
+		if(contador_campos != len(campos)):
+		    query += " , "
 	
 	query += ")"
 	query += " VALUES ('"+str(id_cliente) +"' , "
+
+        contador_valores = 0
 	for valor in valores:
-		query+= "'"+str(valor) + "'"
-		if(valor != valores[len(valores)-1]):
-			query += " , "
+                contador_valores += 1
+		query += "'"+str(valor) + "'"
+		if(contador_valores != len(valores)):
+		    query += " , "
 	query += ");"
 	print query
 	cursor.execute(query)
