@@ -37,6 +37,21 @@ def newCustomer():
 		fillableFields.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
                 fillableFields.append({'fieldName': "Imagen de Perfil", 'fieldType': "file"})
+		
+		
+		
+		cursor = conn.cursor()
+		cursor.execute("Select * FROM nuevos_campos")
+		records = cursor.fetchall()
+		for campo in records:
+			if(campo[2] == "texto"):
+				fillableFields.append({'fieldName': campo[1], 'fieldType': "text"})
+			elif(campo[2] == "entero"):
+				fillableFields.append({'fieldName': campo[1], 'fieldType': "number"})
+			elif(campo[2] == "decimal"):
+				fillableFields.append({'fieldName': campo[1], 'fieldType': "number"})
+			elif(campo[2] == "fecha"):
+				fillableFields.append({'fieldName': campo[1], 'fieldType': "date"})
 		return render_template('newCustomer.html', fillableFields=fillableFields)
 
 
@@ -104,9 +119,37 @@ def searchCustomer():
 
 		return redirect("/searchCustomerResults")
 
+		
+		
 @app.route('/searchCustomerResults')
 def searchCustomerResults():
-	return render_template('searchCustomerResults.html')
+    
+	campos = [{'fieldName': "Nombre", 'fieldType': "text"}]
+	campos.append({'fieldName': "apellido", 'fieldType': "text"})
+
+	campos.append({'fieldName': "Fecha inicio", 'fieldType': "date"})
+	campos.append({'fieldName': "NIT", 'fieldType': "text"})
+	campos.append({'fieldName': "Pago total", 'fieldType': "text"})
+		
+	campos.append({'fieldName': "oficina", 'fieldType': "text"})
+	campos.append({'fieldName': "contrato", 'fieldType': "text"})
+	campos.append({'fieldName': "estado", 'fieldType': "text"})
+	campos.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
+
+	
+
+	
+	data = funciones.listaClientes(conn)
+	
+	filas = []
+	for dat in data:
+		fila = []
+		for valor in dat:
+			fila.append({'valor': valor})
+		filas.append(fila)
+    
+
+	return render_template('searchCustomerResults.html' , campos = campos, filas = filas)
 
 @app.route('/newField', methods=['GET', 'POST'])
 def newField():
@@ -115,17 +158,21 @@ def newField():
 	elif request.method == 'POST':
 		newFieldName = request.form['newFieldName']
 		newFieldType = request.form['newFieldType']
-
+		
 		# Field type 1 corresponds to text
 		# Field type 2 corresponds to integer
 		# Field type 3 corresponds to float
 		# Field type 4 corresponds to date
 		print("Create field: "+newFieldName+" with type: "+newFieldType)
 		#Create field
+		print funciones.nuevoCampo(conn, newFieldName, newFieldType)
+		return redirect('/newCustomer')
 
-		return redirect('/')
 
-
+		
+@app.route('/profile')
+def profile():
+	return render_template('profile.html')
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=True, port=8080)

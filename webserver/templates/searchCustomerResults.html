@@ -6,24 +6,22 @@
 		<table class='highlight responsive-table centered bordered'>
 			<thead>
 				<tr>
-					<th>Heading 1</th>
-					<th>Heading 2</th>
-					<th>Heading 3</th>
+				{% for campo in campos %}
+					<th>{{campo['fieldName']}}</th>
+				{% endfor %}	
 				</tr>
 			</thead>
 			
 			<tbody>
+				{% for fila in filas %}
 				<tr>
-					<td>Data 1</td>
-					<td>Data 2</td>
-					<td>Data 3</td>
+					{% for valor in fila %}
+					<td>{{valor['valor']}}</td>
+					{% endfor %}
+					<td><a href = "profile">Ver perfil</a></td>
 				</tr>
-
-				<tr>
-					<td>Data 4</td>
-					<td>Data 5</td>
-					<td>Data 6</td>
-				</tr>
+				{% endfor %}
+				
 			</tbody>
 			
 		</table>
