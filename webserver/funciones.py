@@ -24,6 +24,7 @@ def InsertarCliente(conn, valores, campos):
 		id_cliente = records[len(records)-1][0]+1
 	query = "INSERT INTO clientes ( id_cliente , "
 	
+        contador_campos = 0
 	for campo in campos:
 		if(campo in camposFijos):
 			query+= ""+str(campo) + ""
@@ -31,6 +32,11 @@ def InsertarCliente(conn, valores, campos):
 				query += " , "
 
 			
+                contador_campos += 1
+		query += str(campo)
+		if(contador_campos != len(campos)):
+		    query += " , "
+>>>>>>> 3290067508fdb23619a017211ce9bce2d7ce9b22
 	
 	query += ")"
 	query += " VALUES ('"+str(id_cliente) +"' , "

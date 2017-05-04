@@ -48,6 +48,7 @@ CREATE TABLE nuevos_campos (
 CREATE TABLE clientes (
 	id_cliente integer,
 	nombre varchar(40),
+	imagen_de_perfil varchar(40),
 	usuario_twitter varchar(15),
 	apellido varchar(40),
 	fecha_inicio date default now(), 
