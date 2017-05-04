@@ -1,7 +1,20 @@
 def InsertarCliente(conn, valores, campos):
 	cursor = conn.cursor()
- 
-
+	camposFijos = []
+	camposFijos.append("id_cliente")
+	camposFijos.append("nombre")
+	camposFijos.append("apellido")
+	camposFijos.append("fecha_inicio")
+	camposFijos.append("domicilio")
+	camposFijos.append("correo")
+	camposFijos.append("pago_total")
+	camposFijos.append("nit")
+	camposFijos.append("contrato")
+	camposFijos.append("oficina")
+	camposFijos.append("estado")
+	camposFijos.append("tipo_cliente")
+	camposFijos.append("usuario_twitter")
+	
 	cursor.execute("Select * FROM clientes")
 
 	records = cursor.fetchall()
@@ -12,20 +25,32 @@ def InsertarCliente(conn, valores, campos):
 	query = "INSERT INTO clientes ( id_cliente , "
 	
 	for campo in campos:
-		query+= ""+str(campo) + ""
-		if(campo != campos[len(campos)-1]):
-			query += " , "
+		if(campo in camposFijos):
+			query+= ""+str(campo) + ""
+			if(campo != campos[len(campos)-1]):
+				query += " , "
+
+			
 	
 	query += ")"
 	query += " VALUES ('"+str(id_cliente) +"' , "
 	contador = 0
+	queryNuevosCampos = ""
 	for valor in valores:
 		contador += 1
-		query+= "'"+str(valor) + "'"
-		if(contador != len(valores)):
+		if(campos[contador-1] in camposFijos):
+			query+= "'"+str(valor) + "'"
 			query += " , "
+		else:
+			queryNuevosCampos += "INSERT INTO valores_nuevos_campos VALUES ( "+ str(id_cliente) +" , "
+			queryNuevosCampos += "(SELECT nuevos_campos.id_campo FROM nuevos_campos WHERE LOWER(campo) = '"+ campos[contador-1]+"') , "
+			queryNuevosCampos += " '" +valor+"' );   "
+
+		
+	query = query[:-2]
 	query += ");"
 	cursor.execute(query)
+	cursor.execute(queryNuevosCampos)
 	conn.commit()
 
 	return id_cliente
