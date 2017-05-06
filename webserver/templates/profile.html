@@ -2,83 +2,24 @@
 {% block pageTitle %}Perfil de cliente{%endblock%}
 
 {% block pageContent %}
-<div class="container">
-	<div>
-		<form class="col s12" action="/newCustomer" method="POST">
-			<div class="row">
-					<div class="row">
-						Nuevo cliente
-					</div>
-
-					<div class="row">
-						{% for fillableField in fillableFields %}
-							{% if fillableField['fieldName'] == "oficina" %}
-								<div class="input-field col s12">
-									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
-										<option value="1">Zona 10 Guatemala</option>
-										<option value="2">Zona 14 Guatemala</option>
-										<option value="3">Zona 16 Guatemala</option>
-									</select>
-									<label>Oficina</label>
-								</div>
-							{% elif fillableField['fieldName'] == "contrato" %}
-								<div class="input-field col s12">
-									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
-										<option value="1">Anual</option>
-										<option value="2">Mensual</option>
-										<option value="3">Permanente</option>
-									</select>
-									<label>Contrato</label>
-								</div>
-							{% elif fillableField['fieldName'] == "estado" %}
-								<div class="input-field col s12">
-									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
-										<option value="1">Activo</option>
-										<option value="2">Inactivo</option>
-										<option value="3">Terminado</option>
-									</select>
-									<label>Estado</label>
-								</div>
-							{% elif fillableField['fieldName'] == "tipo_cliente" %}
-								<div class="input-field col s12">
-									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
-										<option value="1">Regular</option>
-										<option value="2">Familiar</option>
-										<option value="3">Asociado</option>
-									</select>
-									<label>Tipo de cliente</label>
-								</div>
-							{% else %}
-								<div class="input-field col s12">
-									<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}" required>
-									<label for="{{fillableField['fieldName']}}">{{fillableField['fieldName']}}</label>
-									
-								</div>
-							{% endif %}
-						{% endfor %}
-						<!-- <div class="input-field col s2">
-							<input type="date" class="datepicker" name="Test">
-							<label for="Test">Test</label>
-						</div> -->
-					</div>
-			</div>
-
-			<div class="center">
-				<button class="btn waves-effect waves-light" type="submit" name="action">
-					Agregar
-					<i class="material-icons right">send</i>	
-				</button>
-			</div>
-		</form>
+	<div class="container">
+		<table class='highlight responsive-table centered bordered'>
+			<thead>
+				<tr>
+				{% for campo in campos %}
+					<th>{{campo['fieldName']}}</th>
+				{% endfor %}	
+				</tr>
+			</thead>
+			<img src={{image_path}}>	
+			<tbody>
+				<tr>
+					{% for valor in fila %}
+						<td>{{valor['valor']}}</td>
+					{% endfor %}
+				</tr>
+			</tbody>
+			
+		</table>
 	</div>
-</div>
-
-<!-- 	<script>
-		$(document).ready(function(){
-			$('.datepicker').pickadate({
-				selectMonths: true, // Creates a dropdown to control month
-				selectYears: 100 // Creates a dropdown of 15 years to control year
-			});
-		});
-	</script> -->
 {% endblock %}

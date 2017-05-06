@@ -1,3 +1,13 @@
+def eliminarCliente(conn, client_id):
+    cursor = conn.cursor()
+    
+    query = "DELETE FROM clientes "
+    query += "WHERE clientes.id_cliente = "+client_id
+    query += ";"
+
+    cursor.execute(query)
+    conn.commit()
+
 def InsertarCliente(conn, valores, campos):
 	cursor = conn.cursor()
  
@@ -31,11 +41,11 @@ def InsertarCliente(conn, valores, campos):
 	conn.commit()
 
 	return id_cliente
-	
+
 	
 def listaClientes (conn):
 	cursor = conn.cursor()
-	query  = "SELECT nombre, apellido, fecha_inicio, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo "
+	query  = "SELECT nombre, apellido, fecha_inicio, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, id_cliente "
 	query += "FROM clientes, oficinas, estados, contratos, tipos_cliente "
 	query += "WHERE contrato = id_tipo_contrato "
 	query += "AND oficina = id_oficina "
@@ -44,7 +54,32 @@ def listaClientes (conn):
 	cursor.execute(query)
 
 	records = cursor.fetchall()
+        conn.commit()
 	return records
+
+def clienteID(conn, id):
+    cursor = conn.cursor()
+    query = "SELECT nombre, apellido, usuario_twitter, fecha_inicio, domicilio, correo, nit, pago_total, oficina, contrato, estado, tipo_cliente "
+    query += "FROM clientes "
+    query += "WHERE clientes.id_cliente = "+id+";"
+    
+    cursor.execute(query)
+    records = cursor.fetchall()
+    conn.commit()
+
+    return records
+
+def clienteIDImagen(conn, id):
+    cursor = conn.cursor()
+    query = "SELECT imagen_de_perfil "
+    query += "FROM clientes "
+    query += "WHERE clientes.id_cliente = "+id+";"
+    
+    cursor.execute(query)
+    records = cursor.fetchall()
+    conn.commit()
+
+    return records
 	
 	
 def nuevoCampo(conn, campo, tipo):

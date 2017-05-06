@@ -16,9 +16,24 @@
 				{% for fila in filas %}
 				<tr>
 					{% for valor in fila %}
-					<td>{{valor['valor']}}</td>
+						{% if valor['id'] %}
+							<td>
+								<form action="/profile/{{valor['id']}}" method="get">
+									<button class="btn waves-effect waves-light" type="submit"> Ver Perfil </button> 
+								</form>
+							</td>
+
+							<td>
+								<form action="/delete/{{valor['id']}}" method="post">
+									<button class="btn-floating btn-large waves-effect waves-light red" onclick="return confirmation();">
+										<i class="material-icons">delete</i>
+									</button>
+							</td>
+
+						{% else %}	
+							<td>{{valor['valor']}}</td>
+						{% endif %}
 					{% endfor %}
-					<td><a href = "profile">Ver perfil</a></td>
 				</tr>
 				{% endfor %}
 				
@@ -26,4 +41,14 @@
 			
 		</table>
 	</div>
+
+	<script>
+		function confirmation(){
+		    if(confirm('Esta seguro de eliminar el cliente?')){
+			return true;
+		    }else{
+			return false;
+		    }   
+		}
+	</script>
 {% endblock %}

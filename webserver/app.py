@@ -4,7 +4,7 @@ import os
 UPLOAD_FOLDER = os.getcwd()+'/images/'
 ALLOWED_EXTENSIONS = set(['jpg', 'png', 'jpeg'])
 
-from flask import Flask, render_template, request, Markup, session, redirect, g, url_for
+from flask import Flask, render_template, request, Markup, session, redirect, g, url_for, send_from_directory
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -125,18 +125,16 @@ def searchCustomer():
 def searchCustomerResults():
     
 	campos = [{'fieldName': "Nombre", 'fieldType': "text"}]
-	campos.append({'fieldName': "apellido", 'fieldType': "text"})
+	campos.append({'fieldName': "Apellido", 'fieldType': "text"})
 
-	campos.append({'fieldName': "Fecha inicio", 'fieldType': "date"})
+	campos.append({'fieldName': "Fecha Inicio", 'fieldType': "date"})
 	campos.append({'fieldName': "NIT", 'fieldType': "text"})
-	campos.append({'fieldName': "Pago total", 'fieldType': "text"})
+	campos.append({'fieldName': "Pago Total", 'fieldType': "text"})
 		
-	campos.append({'fieldName': "oficina", 'fieldType': "text"})
-	campos.append({'fieldName': "contrato", 'fieldType': "text"})
-	campos.append({'fieldName': "estado", 'fieldType': "text"})
-	campos.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
-
-	
+	campos.append({'fieldName': "Oficina", 'fieldType': "text"})
+	campos.append({'fieldName': "Contrato", 'fieldType': "text"})
+	campos.append({'fieldName': "Estado", 'fieldType': "text"})
+	campos.append({'fieldName': "Tipo Cliente", 'fieldType': "text"})
 
 	
 	data = funciones.listaClientes(conn)
@@ -144,8 +142,14 @@ def searchCustomerResults():
 	filas = []
 	for dat in data:
 		fila = []
+                isID = 1
 		for valor in dat:
-			fila.append({'valor': valor})
+                        # The last one is the id
+                        if isID == len(dat):
+                            fila.append({'id': valor})
+                        else:
+    			    fila.append({'valor': valor})
+                        isID += 1
 		filas.append(fila)
     
 
@@ -170,9 +174,47 @@ def newField():
 
 
 		
-@app.route('/profile')
-def profile():
-	return render_template('profile.html')
+@app.route('/profile/<client_id>', methods=['GET'])
+def profile(client_id):
+	
+        campos = [{'fieldName': "Nombre", 'fieldType': "text"}]
+	campos.append({'fieldName': "Apellido", 'fieldType': "text"})
+        campos.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
+
+	campos.append({'fieldName': "Fecha Inicio", 'fieldType': "text"})
+	campos.append({'fieldName': "Domicilio", 'fieldType': "text"})
+	campos.append({'fieldName': "Correo", 'fieldType': "text"})
+	campos.append({'fieldName': "NIT", 'fieldType': "text"})
+	campos.append({'fieldName': "Pago Total", 'fieldType': "text"})
+		
+	campos.append({'fieldName': "Oficina", 'fieldType': "text"})
+	campos.append({'fieldName': "Contrato", 'fieldType': "text"})
+	campos.append({'fieldName': "Estado", 'fieldType': "text"})
+	campos.append({'fieldName': "Tipo Cliente", 'fieldType': "text"})
+        
+
+	data = funciones.clienteID(conn, client_id)
+        
+        image_name = funciones.clienteIDImagen(conn, client_id)
+        image_path = "/images/"+image_name[0][0]
+	
+	for dat in data:
+		fila = []
+		for valor in dat:
+                        fila.append({'valor': valor})
+
+        
+	return render_template('profile.html', campos = campos, fila = fila, image_path = image_path)
+
+@app.route('/delete/<client_id>', methods=['POST'])
+def delete(client_id):
+    funciones.eliminarCliente(conn, client_id)
+    
+    return render_template('deleteProfile.html')
+
+@app.route('/images/<image_name>', methods=['GET'])
+def image(image_name):
+    return send_from_directory('images', image_name)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=True, port=8080)
