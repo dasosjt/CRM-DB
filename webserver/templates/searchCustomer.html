@@ -15,6 +15,7 @@
 								{% if filterableField['fieldName'] == "oficina" %}
 									<div class="input-field col s12">
 										<select id="{{filterableField['fieldName']}}" name="{{filterableField['fieldName']}}">
+											<option value="0">Cualquiera</option>
 											<option value="1">Zona 10 Guatemala</option>
 											<option value="2">Zona 14 Guatemala</option>
 											<option value="3">Zona 16 Guatemala</option>
@@ -24,6 +25,7 @@
 								{% elif filterableField['fieldName'] == "contrato" %}
 									<div class="input-field col s12">
 										<select id="{{filterableField['fieldName']}}" name="{{filterableField['fieldName']}}">
+											<option value="0">Cualquiera</option>
 											<option value="1">Anual</option>
 											<option value="2">Mensual</option>
 											<option value="3">Permanente</option>
@@ -33,6 +35,7 @@
 								{% elif filterableField['fieldName'] == "estado" %}
 									<div class="input-field col s12">
 										<select id="{{filterableField['fieldName']}}" name="{{filterableField['fieldName']}}">
+											<option value="0">Cualquiera</option>
 											<option value="1">Activo</option>
 											<option value="2">Inactivo</option>
 											<option value="3">Terminado</option>
@@ -42,15 +45,26 @@
 								{% elif filterableField['fieldName'] == "tipo_cliente" %}
 									<div class="input-field col s12">
 										<select id="{{filterableField['fieldName']}}" name="{{filterableField['fieldName']}}">
+											<option value="0">Cualquiera</option>
 											<option value="1">Regular</option>
 											<option value="2">Familiar</option>
 											<option value="3">Asociado</option>
 										</select>
 										<label>Tipo de cliente</label>
 									</div>
+								{% elif filterableField['fieldType'] == "text" %}
+								<div class="input-field col s10">
+										<input id="{{filterableField['fieldName']}}" type="{{filterableField['fieldType']}}" class="validate" name="{{filterableField['fieldName']}}">
+										<label for="{{filterableField['fieldName']}}">{{filterableField['fieldName']}}</label>
+								</div>
+								<div class="input-field col s2">
+									<select id="{{filterableField['fieldName']}}_comparisonType" name="{{filterableField['fieldName']}}_comparisonType">
+										<option value=7></option>
+									</select>
+								</div>
 								{% else %}
 									<div class="input-field col s10">
-										<input id="{{filterableField['fieldName']}}" type="{{filterableField['fieldType']}}" class="validate" name="{{filterableField['fieldName']}}" required>
+										<input id="{{filterableField['fieldName']}}" type="{{filterableField['fieldType']}}" class="validate" name="{{filterableField['fieldName']}}">
 										<label for="{{filterableField['fieldName']}}">{{filterableField['fieldName']}}</label>
 									</div>
 
