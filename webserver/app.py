@@ -13,6 +13,7 @@ import sys
 import psycopg2
 conn_string = "host='localhost' dbname='proyecto2' user='postgres' password=''"
 conn = psycopg2.connect(conn_string)
+camposComparar = []
 
 @app.route('/')
 def homePage():
@@ -88,14 +89,48 @@ def searchCustomer():
 	if request.method == 'GET':
 		# filterableFields should be filled with the fields of the customers table in the DB,
 		# note that each field requires a fieldName and a fieldType, to provide a form accordingly to the types. Here's an example:
-		filterableFields = [{'fieldName': "contrato", 'fieldType': "text"}, {'fieldName': "field2", 'fieldType': "date"}, {'fieldName': "field3", 'fieldType': "text"}]
+
+
+		filterableFields = [{'fieldName': "Nombre", 'fieldType': "text"}]
+		filterableFields.append({'fieldName': "Apellido", 'fieldType': "text"})
+		filterableFields.append({'fieldName': "Fecha inicio", 'fieldType': "date"})
+		filterableFields.append({'fieldName': "Domicilio", 'fieldType': "text"})
+		filterableFields.append({'fieldName': "Correo", 'fieldType': "text"})
+		filterableFields.append({'fieldName': "NIT", 'fieldType': "text"})
+		filterableFields.append({'fieldName': "Pago Total", 'fieldType': "number"})
+
+		filterableFields.append({'fieldName': "oficina", 'fieldType': "text"})
+		filterableFields.append({'fieldName': "contrato", 'fieldType': "text"})
+		filterableFields.append({'fieldName': "estado", 'fieldType': "text"})
+		filterableFields.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
+
+
+
+
+		cursor = conn.cursor()
+		cursor.execute("Select * FROM nuevos_campos")
+		records = cursor.fetchall()
+		for campo in records:
+			if(campo[2] == "texto"):
+				filterableFields.append({'fieldName': campo[1], 'fieldType': "text"})
+			elif(campo[2] == "entero"):
+				filterableFields.append({'fieldName': campo[1], 'fieldType': "number"})
+			elif(campo[2] == "decimal"):
+				filterableFields.append({'fieldName': campo[1], 'fieldType': "number"})
+			elif(campo[2] == "fecha"):
+				filterableFields.append({'fieldName': campo[1], 'fieldType': "date"})
+
+
 		return render_template('searchCustomer.html', filterableFields=filterableFields)
 
 
 	elif request.method == 'POST':
+
+		del camposComparar[:]
+
 		# Processing the filter
 		for field in request.form:
-			print(field)
+			#print(field)
 			#For each field in the form
 			if (field != 'action') and ("_comparisonType" not in field):
 				#If the field isn't the submit button or a comparison type descriptor
@@ -108,14 +143,26 @@ def searchCustomer():
 				# Comparison type 5 corresponds to >
 				# Comparison type 6 corresponds to >=
 
+				campo = []
+
 				fieldName = field
+				campo.append(fieldName.lower().replace(" ","_"))
+
 				fieldValue = request.form[field]
-				if (fieldName == 'oficina') or (fieldName == 'contrato') or (fieldName == 'estado') or (fieldName == 'tipo_cliente'):
+				campo.append(fieldValue)
+
+				if (fieldName == 'oficina') or (fieldName == 'contrato') or (fieldName == 'estado') or (fieldName == 'tipo_cliente') or ():
 					fieldComparisonType = '1'
 				else:
 					fieldComparisonType = request.form[field+"_comparisonType"]
 
+				campo.append(fieldComparisonType)
 				print(fieldName + " has to be filtered with value: " + fieldValue + " applying comparison " + fieldComparisonType)
+
+			camposComparar.append(campo)
+
+
+		#print camposComparar
 
 		return redirect("/searchCustomerResults")
 
@@ -136,8 +183,7 @@ def searchCustomerResults():
 	campos.append({'fieldName': "Estado", 'fieldType': "text"})
 	campos.append({'fieldName': "Tipo Cliente", 'fieldType': "text"})
 
-
-	data = funciones.listaClientes(conn)
+	data = funciones.listaClientes(conn, camposComparar)
 
 	filas = []
 	for dat in data:
