@@ -37,9 +37,7 @@ def newCustomer():
 		fillableFields.append({'fieldName': "Estado", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "Tipo Cliente", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
-                fillableFields.append({'fieldName': "Imagen de Perfil", 'fieldType': "file"})
-
-
+		fillableFields.append({'fieldName': "Imagen de Perfil", 'fieldType': "file"})
 
 		cursor = conn.cursor()
 		cursor.execute("Select * FROM nuevos_campos")

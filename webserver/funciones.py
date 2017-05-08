@@ -154,7 +154,7 @@ def clienteIDImagen(conn, id):
 
 def listaClientes (conn, comparaciones):
     cursor = conn.cursor()
-    query  = "SELECT nombre, apellido, fecha_inicio, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo "
+    query  = "SELECT nombre, apellido, fecha_inicio, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
     query += "FROM clientes, oficinas, estados, contratos, tipos_cliente "
     query += "WHERE contrato = id_tipo_contrato "
     query += "AND oficina = id_oficina "
