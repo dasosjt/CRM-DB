@@ -32,10 +32,10 @@ def newCustomer():
 		fillableFields.append({'fieldName': "Correo", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "NIT", 'fieldType': "text"})
 
-		fillableFields.append({'fieldName': "Oficina", 'fieldType': "text"})
-		fillableFields.append({'fieldName': "Contrato", 'fieldType': "text"})
-		fillableFields.append({'fieldName': "Estado", 'fieldType': "text"})
-		fillableFields.append({'fieldName': "Tipo Cliente", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "oficina", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "contrato", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "estado", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "Imagen de Perfil", 'fieldType': "file"})
 
