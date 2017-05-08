@@ -11,7 +11,7 @@ CREATE TABLE contratos (
 	tipo varchar(20),
 	costo float,
 	constraint tipo_contrato_pk primary key (id_tipo_contrato)
-	
+
 );
 
 
@@ -20,7 +20,7 @@ CREATE TABLE estados (
 	id_estado_cliente integer,
 	estado varchar(20),
 	constraint estado_pk primary key (id_estado_cliente)
-	
+
 );
 
 
@@ -30,7 +30,7 @@ CREATE TABLE tipos_cliente (
 	tipo varchar(20),
 	descuento float,
 	constraint tipo_cliente_pk primary key (id_tipo_cliente)
-	
+
 );
 
 
@@ -51,21 +51,21 @@ CREATE TABLE clientes (
 	imagen_de_perfil varchar(40),
 	usuario_twitter varchar(15),
 	apellido varchar(40),
-	fecha_inicio date default now(), 
+	fecha_inicio date default now(),
 	domicilio varchar(40),
 	correo varchar(30),
 	nit varchar(15),
 	pago_total float,
-	
-	
+
+
 	oficina integer,
 	contrato integer,
 	estado integer,
 	tipo_cliente integer,
 
 	constraint cliente_pk primary key (id_cliente),
-	
-	
+
+
 	constraint oficina_fk foreign key (oficina) references oficinas (id_oficina),
 	constraint tipo_contrato_fk foreign key (contrato) references contratos (id_tipo_contrato),
 	constraint estado_fk foreign key (estado) references estados (id_estado_cliente),
@@ -105,3 +105,10 @@ INSERT INTO estados VALUES (3, 'Terminado');
 INSERT INTO tipos_cliente VALUES (1, 'Regular' , 0);
 INSERT INTO tipos_cliente VALUES (2, 'Familiar' , 0.15);
 INSERT INTO tipos_cliente VALUES (3, 'Asociado' , 0.3);
+
+
+CREATE INDEX b_apellido ON clientes (apellido);
+CREATE INDEX b_contrato ON clientes (contrato);
+CREATE INDEX b_tipo_cliente ON clientes (tipo_cliente);
+CREATE INDEX b_estado ON clientes (estado);
+CREATE INDEX b_oficinas ON clientes (oficina);
