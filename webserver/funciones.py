@@ -26,7 +26,7 @@ def InsertarCliente(conn, valores, campos):
 	camposFijos.append("tipo_cliente")
 	camposFijos.append("usuario_twitter")
 
-
+	cursor.execute("SELECT * FROM clientes ORDER BY id_cliente;")
 	records = cursor.fetchall()
 	if(len(records) == 0):
 		id_cliente = 1
@@ -38,15 +38,10 @@ def InsertarCliente(conn, valores, campos):
 	for campo in campos:
 		if(campo in camposFijos):
 			query+= ""+str(campo) + ""
-			if(campo != campos[len(campos)-1]):
-				query += " , "
+			query += " , "
+			
 
-
-                contador_campos += 1
-		query += str(campo)
-		if(contador_campos != len(campos)):
-		    query += " , "
-
+	query = query[:-2]
 	query += ")"
 	query += " VALUES ('"+str(id_cliente) +"' , "
 	contador = 0
