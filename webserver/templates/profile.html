@@ -3,23 +3,28 @@
 
 {% block pageContent %}
 	<div class="container">
+		<img src={{image_path}}>
 		<table class='highlight responsive-table centered bordered'>
 			<thead>
 				<tr>
-				{% for campo in campos %}
-					<th>{{campo['fieldName']}}</th>
-				{% endfor %}	
+				{% for column in columns %}
+					<th>{{column['fieldName']}}</th>
+				{% endfor %}
 				</tr>
 			</thead>
-			<img src={{image_path}}>	
 			<tbody>
 				<tr>
-					{% for valor in fila %}
-						<td>{{valor['valor']}}</td>
+					{% for value in line %}
+						<td>{{value['value']}}</td>
 					{% endfor %}
 				</tr>
 			</tbody>
-			
+
 		</table>
+		<form action="/edit/{{client_id}}" method="get">
+			<button class="btn-floating small waves-effect waves-light green">
+				<i class="material-icons">settings</i>
+			</button>
+		</form>
 	</div>
 {% endblock %}

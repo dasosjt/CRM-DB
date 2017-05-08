@@ -1,6 +1,6 @@
 def eliminarCliente(conn, client_id):
     cursor = conn.cursor()
-    
+
     query = "DELETE FROM clientes "
     query += "WHERE clientes.id_cliente = "+client_id
     query += ";"
@@ -10,7 +10,7 @@ def eliminarCliente(conn, client_id):
 
 def InsertarCliente(conn, valores, campos):
 	cursor = conn.cursor()
- 
+
 
 	cursor.execute("Select * FROM clientes")
 
@@ -20,14 +20,14 @@ def InsertarCliente(conn, valores, campos):
 	else:
 		id_cliente = records[len(records)-1][0]+1
 	query = "INSERT INTO clientes ( id_cliente , "
-	
+
         contador_campos = 0
 	for campo in campos:
                 contador_campos += 1
 		query += str(campo)
 		if(contador_campos != len(campos)):
 		    query += " , "
-	
+
 	query += ")"
 	query += " VALUES ('"+str(id_cliente) +"' , "
 	contador = 0
@@ -42,49 +42,102 @@ def InsertarCliente(conn, valores, campos):
 
 	return id_cliente
 
-	
+def renombrarColumns(columna):
+    if columna != 'nit':
+        return columna.replace("_", " ").title()
+    else:
+        return "NIT"
+
+
 def listaClientes (conn):
-	cursor = conn.cursor()
-	query  = "SELECT nombre, apellido, fecha_inicio, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, id_cliente "
-	query += "FROM clientes, oficinas, estados, contratos, tipos_cliente "
-	query += "WHERE contrato = id_tipo_contrato "
-	query += "AND oficina = id_oficina "
-	query += "AND clientes.estado = id_estado_cliente "
-	query += "AND clientes.tipo_cliente = tipos_cliente.id_tipo_cliente;"
-	cursor.execute(query)
-
-	records = cursor.fetchall()
-        conn.commit()
-	return records
-
-def clienteID(conn, id):
     cursor = conn.cursor()
-    query = "SELECT nombre, apellido, usuario_twitter, fecha_inicio, domicilio, correo, nit, pago_total, oficina, contrato, estado, tipo_cliente "
-    query += "FROM clientes "
-    query += "WHERE clientes.id_cliente = "+id+";"
-    
+    query  = "SELECT nombre, apellido, fecha_inicio, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, id_cliente "
+    query += "FROM clientes, oficinas, estados, contratos, tipos_cliente "
+    query += "WHERE contrato = id_tipo_contrato "
+    query += "AND oficina = id_oficina "
+    query += "AND clientes.estado = id_estado_cliente "
+    query += "AND clientes.tipo_cliente = tipos_cliente.id_tipo_cliente;"
     cursor.execute(query)
+
     records = cursor.fetchall()
     conn.commit()
-
     return records
+    
+def listaColumnas(conn, id):
+        cursor = conn.cursor()
+        query = "SELECT column_name FROM information_schema.columns WHERE table_name='clientes';"
+        cursor.execute(query)
+        primaryColumns = cursor.fetchall()
+        conn.commit()
+
+        cursor = conn.cursor()
+        query = "SELECT id_campo FROM clientes, valores_nuevos_campos WHERE clientes.id_cliente = valores_nuevos_campos.id_cliente"
+        cursor.execute(query)
+        secondaryColumns = cursor.fetchall()
+        conn.commit()
+
+        columns = []
+
+        for data in primaryColumns:
+            for dat in data:
+                if dat != 'id_cliente' and dat != 'imagen_de_perfil':
+	            columns.append({'fieldName': renombrarColumns(dat)})
+        for data in secondaryColumns:
+            for dat in data:
+                columns.append({'fieldName': renombarColumns(dat)})
+
+        return columns
+
+def dataCliente(conn, id):
+    cursor = conn.cursor()
+    query = "SELECT nombre, usuario_twitter, apellido, fecha_inicio, domicilio, correo, nit, pago_total, oficinas.direccion, contratos.tipo, estados.estado, tipos_cliente.tipo "
+    query += "FROM clientes, oficinas, estados, contratos, tipos_cliente "
+    query += "WHERE clientes.id_cliente = "+id+" "
+    query += "AND clientes.contrato = contratos.id_tipo_contrato "
+    query += "AND clientes.oficina = oficinas.id_oficina "
+    query += "AND clientes.estado = estados.id_estado_cliente "
+    query += "AND clientes.tipo_cliente = tipos_cliente.id_tipo_cliente;"
+
+    cursor.execute(query)
+    primaryData = cursor.fetchall()
+    conn.commit()
+
+    cursor = conn.cursor()
+    query = "SELECT nuevos_campos.campo FROM clientes, valores_nuevos_campos, nuevos_campos "
+    query += "WHERE clientes.id_cliente = " + id + " "
+    query += "AND clientes.id_cliente = valores_nuevos_campos.id_cliente "
+    query += "AND valores_nuevos_campos.id_campo = nuevos_campos.id_campo;"
+    cursor.execute(query)
+    secondaryData = cursor.fetchall()
+    conn.commit()
+
+    dataA = []
+
+    for data in primaryData:
+        for dat in data:
+            dataA.append({'value': dat})
+    for data in secondaryData:
+        for dat in data:
+            dataA.append({'value': dat})
+
+    return dataA
 
 def clienteIDImagen(conn, id):
     cursor = conn.cursor()
     query = "SELECT imagen_de_perfil "
     query += "FROM clientes "
     query += "WHERE clientes.id_cliente = "+id+";"
-    
+
     cursor.execute(query)
     records = cursor.fetchall()
     conn.commit()
 
     return records
-	
-	
+
+
 def nuevoCampo(conn, campo, tipo):
 	cursor = conn.cursor()
-	
+
 	type = ""
 	if(tipo == "1"):
 		type = "texto"
@@ -94,8 +147,8 @@ def nuevoCampo(conn, campo, tipo):
 		type = "decimal"
 	elif(tipo == "4"):
 		type = "fecha"
-		
-		
+
+
 	cursor.execute("Select * FROM nuevos_campos;")
 
 	records = cursor.fetchall()
@@ -103,8 +156,8 @@ def nuevoCampo(conn, campo, tipo):
 		id_campo = 1
 	else:
 		id_campo = records[len(records)-1][0]+1
-		
-	
+
+
 	query = "INSERT INTO nuevos_campos VALUES ("+str(id_campo)+" , '"+ campo+"' , '"+ type +"');"
 	cursor.execute(query)
 	conn.commit()

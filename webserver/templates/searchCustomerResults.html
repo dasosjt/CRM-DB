@@ -8,10 +8,10 @@
 				<tr>
 				{% for campo in campos %}
 					<th>{{campo['fieldName']}}</th>
-				{% endfor %}	
+				{% endfor %}
 				</tr>
 			</thead>
-			
+
 			<tbody>
 				{% for fila in filas %}
 				<tr>
@@ -19,26 +19,30 @@
 						{% if valor['id'] %}
 							<td>
 								<form action="/profile/{{valor['id']}}" method="get">
-									<button class="btn waves-effect waves-light" type="submit"> Ver Perfil </button> 
+									<button class="btn-floating small waves-effect waves-light green" type="submit">
+										<i class="material-icons">info_outline</i>
+									</button>
+
 								</form>
 							</td>
 
 							<td>
 								<form action="/delete/{{valor['id']}}" method="post">
-									<button class="btn-floating btn-large waves-effect waves-light red" onclick="return confirmation();">
+									<button class="btn-floating small waves-effect waves-light red" onclick="return confirmation();">
 										<i class="material-icons">delete</i>
 									</button>
+								</form>
 							</td>
 
-						{% else %}	
+						{% else %}
 							<td>{{valor['valor']}}</td>
 						{% endif %}
 					{% endfor %}
 				</tr>
 				{% endfor %}
-				
+
 			</tbody>
-			
+
 		</table>
 	</div>
 
@@ -48,7 +52,7 @@
 			return true;
 		    }else{
 			return false;
-		    }   
+		    }
 		}
 	</script>
 {% endblock %}

@@ -21,25 +21,25 @@ def homePage():
 @app.route('/newCustomer', methods=['GET','POST'])
 def newCustomer():
 	if request.method == 'GET':
-		# fillableFields should be filled with the fields of the customers table in the DB, 
+		# fillableFields should be filled with the fields of the customers table in the DB,
 		# note that each field requires a fieldName and a fieldType, to provide a form accordingly to the types. Here's an example:
 		#fillableFields = [{'fieldName': "oficina", 'fieldType': "text"}, {'fieldName': "field1", 'fieldType': "text"}, {'fieldName': "contrato", 'fieldType': "text"}, {'fieldName': "field3", 'fieldType': "date"}]
 		fillableFields = [{'fieldName': "Nombre", 'fieldType': "text"}]
 		fillableFields.append({'fieldName': "Apellido", 'fieldType': "text"})
-		fillableFields.append({'fieldName': "Fecha inicio", 'fieldType': "date"})
+		fillableFields.append({'fieldName': "Fecha Inicio", 'fieldType': "date"})
 		fillableFields.append({'fieldName': "Domicilio", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "Correo", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "NIT", 'fieldType': "text"})
-		
-		fillableFields.append({'fieldName': "oficina", 'fieldType': "text"})
-		fillableFields.append({'fieldName': "contrato", 'fieldType': "text"})
-		fillableFields.append({'fieldName': "estado", 'fieldType': "text"})
-		fillableFields.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
+
+		fillableFields.append({'fieldName': "Oficina", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "Contrato", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "Estado", 'fieldType': "text"})
+		fillableFields.append({'fieldName': "Tipo Cliente", 'fieldType': "text"})
 		fillableFields.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
                 fillableFields.append({'fieldName': "Imagen de Perfil", 'fieldType': "file"})
-		
-		
-		
+
+
+
 		cursor = conn.cursor()
 		cursor.execute("Select * FROM nuevos_campos")
 		records = cursor.fetchall()
@@ -63,14 +63,14 @@ def newCustomer():
 			# For each field in the form
 			if (field != 'action'):
 				#If the field isn't the submit button
-                                
+
 				fieldName = field
 				fieldValue = request.form[field]
 				campos.append(field.lower().replace(" ","_"))
 				valores.append(fieldValue)
-                                
+
 				print(fieldName + " has to be inserted with val: " + fieldValue)
-                
+
                 image_info = request.files['Imagen de Perfil']
                 # TODO When some client is deleted, notify server to delete the image name. Maybe a good trigger.
                 image_info.save(UPLOAD_FOLDER+image_info.filename)
@@ -86,7 +86,7 @@ def newCustomer():
 @app.route('/searchCustomer', methods=['GET', 'POST'])
 def searchCustomer():
 	if request.method == 'GET':
-		# filterableFields should be filled with the fields of the customers table in the DB, 
+		# filterableFields should be filled with the fields of the customers table in the DB,
 		# note that each field requires a fieldName and a fieldType, to provide a form accordingly to the types. Here's an example:
 		filterableFields = [{'fieldName': "contrato", 'fieldType': "text"}, {'fieldName': "field2", 'fieldType': "date"}, {'fieldName': "field3", 'fieldType': "text"}]
 		return render_template('searchCustomer.html', filterableFields=filterableFields)
@@ -119,26 +119,26 @@ def searchCustomer():
 
 		return redirect("/searchCustomerResults")
 
-		
-		
+
+
 @app.route('/searchCustomerResults')
 def searchCustomerResults():
-    
+        #Good because the columns are not dynamic
 	campos = [{'fieldName': "Nombre", 'fieldType': "text"}]
 	campos.append({'fieldName': "Apellido", 'fieldType': "text"})
 
 	campos.append({'fieldName': "Fecha Inicio", 'fieldType': "date"})
 	campos.append({'fieldName': "NIT", 'fieldType': "text"})
 	campos.append({'fieldName': "Pago Total", 'fieldType': "text"})
-		
+
 	campos.append({'fieldName': "Oficina", 'fieldType': "text"})
 	campos.append({'fieldName': "Contrato", 'fieldType': "text"})
 	campos.append({'fieldName': "Estado", 'fieldType': "text"})
 	campos.append({'fieldName': "Tipo Cliente", 'fieldType': "text"})
 
-	
+
 	data = funciones.listaClientes(conn)
-	
+
 	filas = []
 	for dat in data:
 		fila = []
@@ -151,7 +151,7 @@ def searchCustomerResults():
     			    fila.append({'valor': valor})
                         isID += 1
 		filas.append(fila)
-    
+
 
 	return render_template('searchCustomerResults.html' , campos = campos, filas = filas)
 
@@ -162,7 +162,7 @@ def newField():
 	elif request.method == 'POST':
 		newFieldName = request.form['newFieldName']
 		newFieldType = request.form['newFieldType']
-		
+
 		# Field type 1 corresponds to text
 		# Field type 2 corresponds to integer
 		# Field type 3 corresponds to float
@@ -173,43 +173,26 @@ def newField():
 		return redirect('/newCustomer')
 
 
-		
+
 @app.route('/profile/<client_id>', methods=['GET'])
 def profile(client_id):
-	
-        campos = [{'fieldName': "Nombre", 'fieldType': "text"}]
-	campos.append({'fieldName': "Apellido", 'fieldType': "text"})
-        campos.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
+	columns  = funciones.listaColumnas(conn, client_id)
+	data = funciones.dataCliente(conn, client_id)
+	image_name = funciones.clienteIDImagen(conn, client_id)
+	image_path = "/images/"+image_name[0][0]
 
-	campos.append({'fieldName': "Fecha Inicio", 'fieldType': "text"})
-	campos.append({'fieldName': "Domicilio", 'fieldType': "text"})
-	campos.append({'fieldName': "Correo", 'fieldType': "text"})
-	campos.append({'fieldName': "NIT", 'fieldType': "text"})
-	campos.append({'fieldName': "Pago Total", 'fieldType': "text"})
-		
-	campos.append({'fieldName': "Oficina", 'fieldType': "text"})
-	campos.append({'fieldName': "Contrato", 'fieldType': "text"})
-	campos.append({'fieldName': "Estado", 'fieldType': "text"})
-	campos.append({'fieldName': "Tipo Cliente", 'fieldType': "text"})
-        
+	return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path)
 
-	data = funciones.clienteID(conn, client_id)
-        
-        image_name = funciones.clienteIDImagen(conn, client_id)
-        image_path = "/images/"+image_name[0][0]
-	
-	for dat in data:
-		fila = []
-		for valor in dat:
-                        fila.append({'valor': valor})
+@app.route('/edit/<client_id>', methods=['GET'])
+def edit(client_id):
 
-        
-	return render_template('profile.html', campos = campos, fila = fila, image_path = image_path)
+
+    return render_template('deleteProfile.html')
 
 @app.route('/delete/<client_id>', methods=['POST'])
 def delete(client_id):
     funciones.eliminarCliente(conn, client_id)
-    
+
     return render_template('deleteProfile.html')
 
 @app.route('/images/<image_name>', methods=['GET'])
