@@ -1,3 +1,30 @@
+def reporte(conn, columna):
+    cursor = conn.cursor()
+
+    y = []
+    if columna == "oficina":
+        label = ['Zona 10 Guatemala', 'Zona 14 Guatemala', 'Zona 16 Guatemala']
+    elif columna == "contrato":
+        label = ['Anual', 'Mensual', 'Permanente']
+    elif columna == "estado":
+        label = ['Activo', 'Inactivo', 'Terminado']
+    else:
+        label = ['Regular', 'Familiar', 'Asociado']
+
+    for i in range(1, 3):
+        query = "SELECT count("+columna+") FROM clientes WHERE "+columna+" = "+str(i)+";"
+        cursor.execute(query)
+        temp = cursor.fetchall()
+        print(temp)
+        y.append(temp)
+
+
+
+    conn.commit()
+
+    return label, y
+
+
 def eliminarCliente(conn, client_id):
     cursor = conn.cursor()
 
@@ -36,7 +63,11 @@ def InsertarCliente(conn, valores, campos):
 	camposFijos.append("estado")
 	camposFijos.append("tipo_cliente")
 	camposFijos.append("usuario_twitter")
+<<<<<<< HEAD
 	camposFijos.append("imagen_de_perfil")
+=======
+        camposFijos.append("imagen_de_perfil")
+>>>>>>> 48dcc1c0e4631256755feb55a0457c88c625cb3e
 
 	cursor.execute("SELECT * FROM clientes ORDER BY id_cliente;")
 	records = cursor.fetchall()
@@ -72,10 +103,54 @@ def InsertarCliente(conn, valores, campos):
 	query = query[:-2]
 	query += ");"
 	cursor.execute(query)
-	cursor.execute(queryNuevosCampos)
+        if(queryNuevosCampos != ""):
+        	cursor.execute(queryNuevosCampos)
 	conn.commit()
 
 	return id_cliente
+
+def updateCliente(conn, client_id, valores, campos):
+
+    camposFijos = []
+    camposFijos.append("id_cliente")
+    camposFijos.append("nombre")
+    camposFijos.append("apellido")
+    camposFijos.append("fecha_inicio")
+    camposFijos.append("domicilio")
+    camposFijos.append("correo")
+    camposFijos.append("pago_total")
+    camposFijos.append("nit")
+    camposFijos.append("contrato")
+    camposFijos.append("oficina")
+    camposFijos.append("estado")
+    camposFijos.append("tipo_cliente")
+    camposFijos.append("usuario_twitter")
+    camposFijos.append("imagen_de_perfil")
+    
+    cursor = conn.cursor()
+    query = "UPDATE clientes SET "
+
+    c = 0
+
+    for campo in campos:
+        if(campo in camposFijos):
+            query += campo + " = '" + valores[c] + "', " 
+        else:
+            id_query = "SELECT id_campo FROM nuevos_campos WHERE campo = '"+campo+"';"
+            cursor.execute(id_query)
+            id_campo = cursor.fetchall()
+            update_query = "UPDATE valores_nuevos_campos SET valor  = '" + str(valores[c]) + "' "
+            update_query += "WHERE id_cliente = "+str(client_id)+" AND id_campo = "+str(id_campo[0][0])+";"
+            cursor.execute(update_query)
+        c += 1
+
+    query = query[:-2]
+    query += " WHERE clientes.id_cliente = "+client_id+";"
+
+    cursor.execute(query)
+
+    conn.commit()
+
 
 
 def renombrarColumns(columna):
@@ -87,20 +162,17 @@ def renombrarColumns(columna):
 
 
 def listaColumnas(conn, id):
-        cursor = conn.cursor()
-        query = "SELECT column_name FROM information_schema.columns WHERE table_name='clientes';"
-        cursor.execute(query)
-        primaryColumns = cursor.fetchall()
-        conn.commit()
+            
 
         cursor = conn.cursor()
-        query = "SELECT id_campo FROM clientes, valores_nuevos_campos WHERE clientes.id_cliente = valores_nuevos_campos.id_cliente"
+        query = "SELECT campo FROM nuevos_campos;"
         cursor.execute(query)
         secondaryColumns = cursor.fetchall()
         conn.commit()
 
         columns = []
 
+<<<<<<< HEAD
         for data in primaryColumns:
             for dat in data:
                 if dat != 'id_cliente' and dat != 'imagen_de_perfil':
@@ -108,6 +180,28 @@ def listaColumnas(conn, id):
        # for data in secondaryColumns:
         #    for dat in data:
         #        columns.append({'fieldName': renombrarColumns(dat)})
+=======
+        columns.append({'fieldName': 'Nombre'})
+        columns.append({'fieldName': 'Usuario Twitter'})
+        columns.append({'fieldName': 'Apellido'})
+        columns.append({'fieldName': 'Fecha Inicio'})
+        columns.append({'fieldName': 'Domicilio'})
+        columns.append({'fieldName': 'Correo'})
+        columns.append({'fieldName': 'NIT'})
+        columns.append({'fieldName': 'Pago total'})
+        columns.append({'fieldName': 'Oficina'})
+        columns.append({'fieldName': 'Contrato'})
+        columns.append({'fieldName': 'Estado'})
+        columns.append({'fieldName': 'Tipo cliente'})
+
+        print(secondaryColumns)
+
+        if(len(secondaryColumns) > 0): 
+            for data in secondaryColumns:
+                for dat in data:
+                    if(dat):
+                        columns.append({'fieldName': renombrarColumns(dat)})
+>>>>>>> 48dcc1c0e4631256755feb55a0457c88c625cb3e
 
         return columns
 
@@ -123,16 +217,16 @@ def dataCliente(conn, id):
 
     cursor.execute(query)
     primaryData = cursor.fetchall()
-    conn.commit()
 
     cursor = conn.cursor()
-    query = "SELECT nuevos_campos.campo FROM clientes, valores_nuevos_campos, nuevos_campos "
+    query = "SELECT valor FROM clientes, valores_nuevos_campos "
     query += "WHERE clientes.id_cliente = " + id + " "
-    query += "AND clientes.id_cliente = valores_nuevos_campos.id_cliente "
-    query += "AND valores_nuevos_campos.id_campo = nuevos_campos.id_campo;"
+    query += "AND clientes.id_cliente = valores_nuevos_campos.id_cliente ;"
     cursor.execute(query)
     secondaryData = cursor.fetchall()
     conn.commit()
+
+    #print(secondaryData)
 
     dataA = []
 
@@ -262,7 +356,7 @@ def nuevoCampo(conn, campo, tipo):
 		id_campo = records[len(records)-1][0]+1
 
 
-	query = "INSERT INTO nuevos_campos VALUES ("+str(id_campo)+" , '"+ campo+"' , '"+ type +"');"
+	query = "INSERT INTO nuevos_campos VALUES ("+str(id_campo)+" , '"+ campo.replace(' ', '_').lower()+"' , '"+ type +"');"
 	cursor.execute(query)
 	conn.commit()
 	return 0

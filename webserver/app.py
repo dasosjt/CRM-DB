@@ -75,6 +75,7 @@ def newCustomer():
                 image_info.save(UPLOAD_FOLDER+image_info.filename)
 
                 campos.append("imagen_de_perfil")
+                #print(image_info.filename)
                 valores.append(image_info.filename)
 
                 # Store to DB - Casting may be necessary, as all the data comes in unicode -R: The casting is done in postgres in the Insert
@@ -270,11 +271,65 @@ def profile(client_id):
 
 	return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path)
 
-@app.route('/edit/<client_id>', methods=['GET'])
+@app.route('/edit/<client_id>', methods=['GET', 'POST'])
 def edit(client_id):
+    if request.method == 'GET':
+        fillableFields = [{'fieldName': "Nombre", 'fieldType': "text"}]
+        fillableFields.append({'fieldName': "Apellido", 'fieldType': "text"})
+        fillableFields.append({'fieldName': "Fecha Inicio", 'fieldType': "date"})
+        fillableFields.append({'fieldName': "Domicilio", 'fieldType': "text"})
+        fillableFields.append({'fieldName': "Correo", 'fieldType': "text"})
+        fillableFields.append({'fieldName': "NIT", 'fieldType': "text"})
 
+        fillableFields.append({'fieldName': "oficina", 'fieldType': "text"})
+        fillableFields.append({'fieldName': "contrato", 'fieldType': "text"})
+        fillableFields.append({'fieldName': "estado", 'fieldType': "text"})
+        fillableFields.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
+        fillableFields.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
+        fillableFields.append({'fieldName': "Imagen de Perfil", 'fieldType': "file"})
 
-    return render_template('deleteProfile.html')
+        cursor = conn.cursor()
+        cursor.execute("Select * FROM nuevos_campos")
+        records = cursor.fetchall()
+        for campo in records:
+                if(campo[2] == "texto"):
+                        fillableFields.append({'fieldName': campo[1], 'fieldType': "text"})
+                elif(campo[2] == "entero"):
+                        fillableFields.append({'fieldName': campo[1], 'fieldType': "number"})
+                elif(campo[2] == "decimal"):
+                        fillableFields.append({'fieldName': campo[1], 'fieldType': "number"})
+                elif(campo[2] == "fecha"):
+                        fillableFields.append({'fieldName': campo[1], 'fieldType': "date"})
+
+        return render_template('editProfile.html', fillableFields=fillableFields, client_id = client_id)
+    elif request.method == 'POST':		
+        # Processing the insert
+	valores = []
+	campos = []
+        for field in request.form:
+                # For each field in the form
+                if (field != 'action'):
+                        #If the field isn't the submit button
+
+                        fieldName = field
+                        fieldValue = request.form[field]
+                        campos.append(field.lower().replace(" ","_"))
+                        valores.append(fieldValue)
+
+                        print(fieldName + " has to be updated with val: " + fieldValue)
+
+        image_info = request.files['Imagen de Perfil']
+        # TODO When some client is deleted, notify server to delete the image name. Maybe a good trigger.
+        image_info.save(UPLOAD_FOLDER+image_info.filename)
+
+        campos.append("imagen_de_perfil")
+        #print(image_info.filename)
+        valores.append(image_info.filename)
+
+        # Store to DB - Casting may be necessary, as all the data comes in unicode -R: The casting is done in postgres in the Insert
+        funciones.updateCliente(conn, client_id, valores, campos)
+        # Return success of fail feedback, and redirect user to a convenient view - TODO
+        return redirect('/')
 
 @app.route('/delete/<client_id>', methods=['POST'])
 def delete(client_id):
@@ -292,6 +347,12 @@ def deleteCampo(campo_id):
 @app.route('/images/<image_name>', methods=['GET'])
 def image(image_name):
     return send_from_directory('images', image_name)
+
+@app.route('/reports', methods=['GET'])
+def reports():
+    label1, y1 = funciones.reporte(conn, "oficina")
+    print(label1)
+    print(y1)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=True, port=8080)
