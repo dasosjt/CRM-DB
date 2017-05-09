@@ -67,6 +67,42 @@ def InsertarCliente(conn, valores, campos):
 
 	return id_cliente
 
+def updateCliente(conn, client_id, valores, campos):
+
+    camposFijos = []
+    camposFijos.append("id_cliente")
+    camposFijos.append("nombre")
+    camposFijos.append("apellido")
+    camposFijos.append("fecha_inicio")
+    camposFijos.append("domicilio")
+    camposFijos.append("correo")
+    camposFijos.append("pago_total")
+    camposFijos.append("nit")
+    camposFijos.append("contrato")
+    camposFijos.append("oficina")
+    camposFijos.append("estado")
+    camposFijos.append("tipo_cliente")
+    camposFijos.append("usuario_twitter")
+    camposFijos.append("imagen_de_perfil")
+    
+    cursor = conn.cursor()
+    query = "UPDATE clientes SET "
+
+    c = 0
+
+    for campo in campos:
+        if(campo in camposFijos):
+            query += campo + " = '" + valores[c] + "', " 
+        else:
+            print campo 
+        c += 1
+
+    query = query[:-2]
+    query += " WHERE clientes.id_cliente = "+client_id+";"
+
+    print query
+
+
 
 def renombrarColumns(columna):
     if columna != 'nit':
@@ -80,8 +116,7 @@ def listaColumnas(conn, id):
             
 
         cursor = conn.cursor()
-        query = "SELECT campo FROM clientes, valores_nuevos_campos, nuevos_campos WHERE clientes.id_cliente = valores_nuevos_campos.id_cliente "
-        query += "AND valores_nuevos_campos.id_campo = nuevos_campos.id_campo;"
+        query = "SELECT campo FROM nuevos_campos;"
         cursor.execute(query)
         secondaryColumns = cursor.fetchall()
         conn.commit()
@@ -132,7 +167,7 @@ def dataCliente(conn, id):
     secondaryData = cursor.fetchall()
     conn.commit()
 
-    print(secondaryData)
+    #print(secondaryData)
 
     dataA = []
 
