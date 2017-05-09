@@ -201,6 +201,7 @@ def listaClientes (conn, comparaciones):
     records = cursor.fetchall()
     return records
 
+
 def nuevoCampo(conn, campo, tipo):
 	cursor = conn.cursor()
 
@@ -228,3 +229,15 @@ def nuevoCampo(conn, campo, tipo):
 	cursor.execute(query)
 	conn.commit()
 	return 0
+
+	
+	
+def listaCampos (conn):
+    cursor = conn.cursor()
+    query  = "SELECT campo, tipo, id_campo FROM nuevos_campos"
+
+    query +=";"
+    cursor.execute(query)
+
+    records = cursor.fetchall()
+    return records

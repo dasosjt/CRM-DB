@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block pageTitle %}Resultados de busqueda{%endblock%}
+
+{% block pageContent %}
+	<div class="container">
+		<table class='highlight responsive-table centered bordered'>
+			<thead>
+				<tr>
+				{% for campo in campos %}
+					<th>{{campo['fieldName']}}</th>
+				{% endfor %}
+				</tr>
+			</thead>
+
+			<tbody>
+				{% for fila in filas %}
+				<tr>
+					{% for valor in fila %}
+						{% if valor['id'] %}
+							+
+
+							<td>
+								<form action="/deleteCampo/{{valor['id']}}" method="post">
+									<button class="btn-floating small waves-effect waves-light red" onclick="return confirmation();">
+										<i class="material-icons">delete</i>
+									</button>
+								</form>
+							</td>
+
+						{% else %}
+							<td>{{valor['valor']}}</td>
+						{% endif %}
+					{% endfor %}
+				</tr>
+				{% endfor %}
+
+			</tbody>
+
+		</table>
+	</div>
+
+	<script>
+		function confirmation(){
+		    if(confirm('Esta seguro de eliminar el cliente?')){
+			return true;
+		    }else{
+			return false;
+		    }
+		}
+	</script>
+{% endblock %}

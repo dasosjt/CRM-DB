@@ -192,13 +192,42 @@ def searchCustomerResults():
                         if isID == len(dat):
                             fila.append({'id': valor})
                         else:
-    			    fila.append({'valor': valor})
+							fila.append({'valor': valor})
                         isID += 1
 		filas.append(fila)
 
 
 	return render_template('searchCustomerResults.html' , campos = campos, filas = filas)
 
+	
+	
+	
+@app.route('/Fields')
+def Fields():
+        #Good because the columns are not dynamic
+	campos = [{'fieldName': "Campo", 'fieldType': "text"}]
+	campos.append({'fieldName': "Tipo", 'fieldType': "text"})
+
+	
+
+	data = funciones.listaCampos(conn)
+
+	filas = []
+	for dat in data:
+		fila = []
+		isID = 1
+		for valor in dat:
+			if isID == len(dat):
+				fila.append({'id': valor})
+			else:
+				fila.append({'valor': valor})
+			isID += 1
+                    
+                       
+		filas.append(fila)
+
+
+	return render_template('Fields.html' , campos = campos, filas = filas)
 @app.route('/newField', methods=['GET', 'POST'])
 def newField():
 	if request.method == 'GET':
