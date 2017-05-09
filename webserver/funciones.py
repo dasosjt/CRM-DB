@@ -80,7 +80,8 @@ def listaColumnas(conn, id):
             
 
         cursor = conn.cursor()
-        query = "SELECT id_campo FROM clientes, valores_nuevos_campos WHERE clientes.id_cliente = valores_nuevos_campos.id_cliente"
+        query = "SELECT campo FROM clientes, valores_nuevos_campos, nuevos_campos WHERE clientes.id_cliente = valores_nuevos_campos.id_cliente "
+        query += "AND valores_nuevos_campos.id_campo = nuevos_campos.id_campo;"
         cursor.execute(query)
         secondaryColumns = cursor.fetchall()
         conn.commit()
@@ -105,7 +106,8 @@ def listaColumnas(conn, id):
         if(len(secondaryColumns) > 0): 
             for data in secondaryColumns:
                 for dat in data:
-                    columns.append({'fieldName': renombrarColumns(dat)})
+                    if(dat):
+                        columns.append({'fieldName': renombrarColumns(dat)})
 
         return columns
 
@@ -121,16 +123,16 @@ def dataCliente(conn, id):
 
     cursor.execute(query)
     primaryData = cursor.fetchall()
-    conn.commit()
 
     cursor = conn.cursor()
-    query = "SELECT nuevos_campos.campo FROM clientes, valores_nuevos_campos, nuevos_campos "
+    query = "SELECT valor FROM clientes, valores_nuevos_campos "
     query += "WHERE clientes.id_cliente = " + id + " "
-    query += "AND clientes.id_cliente = valores_nuevos_campos.id_cliente "
-    query += "AND valores_nuevos_campos.id_campo = nuevos_campos.id_campo;"
+    query += "AND clientes.id_cliente = valores_nuevos_campos.id_cliente ;"
     cursor.execute(query)
     secondaryData = cursor.fetchall()
     conn.commit()
+
+    print(secondaryData)
 
     dataA = []
 

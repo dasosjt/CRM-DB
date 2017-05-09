@@ -232,7 +232,7 @@ def profile(client_id):
 def edit(client_id):
 
 
-    return render_template('deleteProfile.html')
+    return render_template('editProfile.html')
 
 @app.route('/delete/<client_id>', methods=['POST'])
 def delete(client_id):
