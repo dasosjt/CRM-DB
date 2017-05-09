@@ -25,6 +25,7 @@ def InsertarCliente(conn, valores, campos):
 	camposFijos.append("estado")
 	camposFijos.append("tipo_cliente")
 	camposFijos.append("usuario_twitter")
+        camposFijos.append("imagen_de_perfil")
 
 	cursor.execute("SELECT * FROM clientes ORDER BY id_cliente;")
 	records = cursor.fetchall()
@@ -60,7 +61,8 @@ def InsertarCliente(conn, valores, campos):
 	query = query[:-2]
 	query += ");"
 	cursor.execute(query)
-	cursor.execute(queryNuevosCampos)
+        if(queryNuevosCampos != ""):
+        	cursor.execute(queryNuevosCampos)
 	conn.commit()
 
 	return id_cliente
@@ -75,11 +77,7 @@ def renombrarColumns(columna):
 
 
 def listaColumnas(conn, id):
-        cursor = conn.cursor()
-        query = "SELECT column_name FROM information_schema.columns WHERE table_name='clientes';"
-        cursor.execute(query)
-        primaryColumns = cursor.fetchall()
-        conn.commit()
+            
 
         cursor = conn.cursor()
         query = "SELECT id_campo FROM clientes, valores_nuevos_campos WHERE clientes.id_cliente = valores_nuevos_campos.id_cliente"
@@ -89,13 +87,25 @@ def listaColumnas(conn, id):
 
         columns = []
 
-        for data in primaryColumns:
-            for dat in data:
-                if dat != 'id_cliente' and dat != 'imagen_de_perfil':
-	            columns.append({'fieldName': renombrarColumns(dat)})
-        for data in secondaryColumns:
-            for dat in data:
-                columns.append({'fieldName': renombarColumns(dat)})
+        columns.append({'fieldName': 'Nombre'})
+        columns.append({'fieldName': 'Usuario Twitter'})
+        columns.append({'fieldName': 'Apellido'})
+        columns.append({'fieldName': 'Fecha Inicio'})
+        columns.append({'fieldName': 'Domicilio'})
+        columns.append({'fieldName': 'Correo'})
+        columns.append({'fieldName': 'NIT'})
+        columns.append({'fieldName': 'Pago total'})
+        columns.append({'fieldName': 'Oficina'})
+        columns.append({'fieldName': 'Contrato'})
+        columns.append({'fieldName': 'Estado'})
+        columns.append({'fieldName': 'Tipo cliente'})
+
+        print(secondaryColumns)
+
+        if(len(secondaryColumns) > 0): 
+            for data in secondaryColumns:
+                for dat in data:
+                    columns.append({'fieldName': renombrarColumns(dat)})
 
         return columns
 

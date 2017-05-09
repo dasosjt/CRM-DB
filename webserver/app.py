@@ -75,6 +75,7 @@ def newCustomer():
                 image_info.save(UPLOAD_FOLDER+image_info.filename)
 
                 campos.append("imagen_de_perfil")
+                #print(image_info.filename)
                 valores.append(image_info.filename)
 
                 # Store to DB - Casting may be necessary, as all the data comes in unicode -R: The casting is done in postgres in the Insert
