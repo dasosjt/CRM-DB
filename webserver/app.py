@@ -298,5 +298,11 @@ def delete(client_id):
 def image(image_name):
     return send_from_directory('images', image_name)
 
+@app.route('/reports', methods=['GET'])
+def reports():
+    label1, y1 = funciones.reporte(conn, "oficina")
+    print(label1)
+    print(y1)
+
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=True, port=8080)

@@ -1,3 +1,30 @@
+def reporte(conn, columna):
+    cursor = conn.cursor()
+
+    y = []
+    if columna == "oficina":
+        label = ['Zona 10 Guatemala', 'Zona 14 Guatemala', 'Zona 16 Guatemala']
+    elif columna == "contrato":
+        label = ['Anual', 'Mensual', 'Permanente']
+    elif columna == "estado":
+        label = ['Activo', 'Inactivo', 'Terminado']
+    else:
+        label = ['Regular', 'Familiar', 'Asociado']
+
+    for i in range(1, 3):
+        query = "SELECT count("+columna+") FROM clientes WHERE "+columna+" = "+str(i)+";"
+        cursor.execute(query)
+        temp = cursor.fetchall()
+        print(temp)
+        y.append(temp)
+
+
+
+    conn.commit()
+
+    return label, y
+
+
 def eliminarCliente(conn, client_id):
     cursor = conn.cursor()
 
@@ -94,13 +121,20 @@ def updateCliente(conn, client_id, valores, campos):
         if(campo in camposFijos):
             query += campo + " = '" + valores[c] + "', " 
         else:
-            print campo 
+            id_query = "SELECT id_campo FROM nuevos_campos WHERE campo = '"+campo+"';"
+            cursor.execute(id_query)
+            id_campo = cursor.fetchall()
+            update_query = "UPDATE valores_nuevos_campos SET valor  = '" + str(valores[c]) + "' "
+            update_query += "WHERE id_cliente = "+str(client_id)+" AND id_campo = "+str(id_campo[0][0])+";"
+            cursor.execute(update_query)
         c += 1
 
     query = query[:-2]
     query += " WHERE clientes.id_cliente = "+client_id+";"
 
-    print query
+    cursor.execute(query)
+
+    conn.commit()
 
 
 
@@ -271,7 +305,7 @@ def nuevoCampo(conn, campo, tipo):
 		id_campo = records[len(records)-1][0]+1
 
 
-	query = "INSERT INTO nuevos_campos VALUES ("+str(id_campo)+" , '"+ campo+"' , '"+ type +"');"
+	query = "INSERT INTO nuevos_campos VALUES ("+str(id_campo)+" , '"+ campo.replace(' ', '_').lower()+"' , '"+ type +"');"
 	cursor.execute(query)
 	conn.commit()
 	return 0
