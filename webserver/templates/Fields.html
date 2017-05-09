@@ -21,7 +21,7 @@
 
 							<td>
 								<form action="/deleteCampo/{{valor['id']}}" method="post">
-									<button class="btn-floating small waves-effect waves-light red" onclick="return confirmation();">
+									<button class="btn-floating small waves-effect waves-light red" onclick="return confirmationCampo();">
 										<i class="material-icons">delete</i>
 									</button>
 								</form>
@@ -40,8 +40,8 @@
 	</div>
 
 	<script>
-		function confirmation(){
-		    if(confirm('Esta seguro de eliminar el cliente?')){
+		function confirmationCampo(){
+		    if(confirm('Esta seguro de eliminar el campo?')){
 			return true;
 		    }else{
 			return false;

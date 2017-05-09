@@ -113,3 +113,64 @@ CREATE TRIGGER trigger_borrar_valores_nuevo_campo
 BEFORE DELETE ON nuevos_campos
 FOR EACH ROW
 EXECUTE PROCEDURE borrar_valores_nuevo_campo ();
+
+
+
+
+-- Trigger 6. Cuando se cambia el costo de un contrato, se actualiza el pago que debe realizar un cliente.
+
+CREATE OR REPLACE FUNCTION update_contrato ()
+RETURNS TRIGGER AS $trigger_update_contrato$ 
+BEGIN
+	
+	UPDATE clientes SET pago_total = (
+	(SELECT costo FROM contratos WHERE id_tipo_contrato = contrato) 
+	-  
+	(SELECT costo FROM contratos WHERE id_tipo_contrato = contrato)
+	*
+	(SELECT descuento FROM tipos_cliente WHERE id_tipo_cliente = tipo_cliente)
+	);
+	
+	RETURN NEW;
+
+END;
+$trigger_update_contrato$ LANGUAGE 'plpgsql';
+
+
+CREATE TRIGGER trigger_update_contrato
+AFTER UPDATE ON contratos
+FOR EACH ROW
+EXECUTE PROCEDURE update_contrato ();
+
+
+
+
+-- Trigger 7. Cuando se cambia el descuento de un tipo de cliente, se vuelve a calcular el pago que deben realizar los clientes.
+
+
+CREATE OR REPLACE FUNCTION update_tipo_cliente ()
+RETURNS TRIGGER AS $trigger_update_tipo_cliente$ 
+BEGIN
+	
+	UPDATE clientes SET pago_total = (
+	(SELECT costo FROM contratos WHERE id_tipo_contrato = contrato) 
+	-  
+	(SELECT costo FROM contratos WHERE id_tipo_contrato = contrato)
+	*
+	(SELECT descuento FROM tipos_cliente WHERE id_tipo_cliente = tipo_cliente)
+	);
+	
+	RETURN NEW;
+
+END;
+$trigger_update_tipo_cliente$ LANGUAGE 'plpgsql';
+
+
+CREATE TRIGGER trigger_update_tipo_cliente
+AFTER UPDATE ON tipos_cliente
+FOR EACH ROW
+EXECUTE PROCEDURE update_tipo_cliente ();
+
+
+
+

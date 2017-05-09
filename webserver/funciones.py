@@ -8,6 +8,17 @@ def eliminarCliente(conn, client_id):
     cursor.execute(query)
     conn.commit()
 
+def eliminarCampo(conn, campo_id):
+    cursor = conn.cursor()
+
+    query = "DELETE FROM nuevos_campos "
+    query += "WHERE id_campo = "+campo_id
+    query += ";"
+
+    cursor.execute(query)
+    conn.commit()
+	
+
 def InsertarCliente(conn, valores, campos):
 	cursor = conn.cursor()
 
@@ -25,6 +36,7 @@ def InsertarCliente(conn, valores, campos):
 	camposFijos.append("estado")
 	camposFijos.append("tipo_cliente")
 	camposFijos.append("usuario_twitter")
+	camposFijos.append("imagen_de_perfil")
 
 	cursor.execute("SELECT * FROM clientes ORDER BY id_cliente;")
 	records = cursor.fetchall()
@@ -93,9 +105,9 @@ def listaColumnas(conn, id):
             for dat in data:
                 if dat != 'id_cliente' and dat != 'imagen_de_perfil':
 	            columns.append({'fieldName': renombrarColumns(dat)})
-        for data in secondaryColumns:
-            for dat in data:
-                columns.append({'fieldName': renombarColumns(dat)})
+       # for data in secondaryColumns:
+        #    for dat in data:
+        #        columns.append({'fieldName': renombrarColumns(dat)})
 
         return columns
 
@@ -148,24 +160,43 @@ def clienteIDImagen(conn, id):
 
 
 def listaClientes (conn, comparaciones):
-    cursor = conn.cursor()
-    query  = "SELECT nombre, apellido, fecha_inicio, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
-    query += "FROM clientes, oficinas, estados, contratos, tipos_cliente "
-    query += "WHERE contrato = id_tipo_contrato "
-    query += "AND oficina = id_oficina "
-    query += "AND clientes.estado = id_estado_cliente "
-    query += "AND clientes.tipo_cliente = tipos_cliente.id_tipo_cliente"
+	cursor = conn.cursor()
+	
+	camposFijos = [] 
+	camposFijos.append("id_cliente")
+	camposFijos.append("nombre")
+	camposFijos.append("apellido")
+	camposFijos.append("fecha_inicio")
+	camposFijos.append("domicilio")
+	camposFijos.append("correo")
+	camposFijos.append("pago_total")
+	camposFijos.append("nit")
+	camposFijos.append("contrato")
+	camposFijos.append("oficina")
+	camposFijos.append("estado")
+	camposFijos.append("tipo_cliente")
+	camposFijos.append("usuario_twitter")
+	
+	
+	query  = "SELECT DISTINCT nombre, apellido, fecha_inicio, domicilio, correo, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
+	query += " FROM clientes, oficinas, estados, contratos, tipos_cliente, nuevos_campos nc, valores_nuevos_campos nvc "
+	query += " WHERE contrato = id_tipo_contrato "
+	query += " AND oficina = id_oficina "
+	query += " AND clientes.estado = id_estado_cliente "
+	query += " AND clientes.tipo_cliente = tipos_cliente.id_tipo_cliente"
+	query += " AND nvc.id_cliente = clientes.id_cliente"
+	query += " AND nvc.id_campo = nc.id_campo"
 
-    for comp in comparaciones:
-        if((comp[0] == 'oficina') or (comp[0] == 'contrato') or (comp[0] == 'estado') or (comp[0] == 'tipo_cliente')):
-            if(comp[1] == '0'):
-                no = 0
-            else:
-                query += " AND clientes."+comp[0] + " = "+comp[1]
-        else:
-            if (comp[1] == ''):
-                no = 0
-            else:
+	for comp in comparaciones:
+		if((comp[0] == 'oficina') or (comp[0] == 'contrato') or (comp[0] == 'estado') or (comp[0] == 'tipo_cliente')):
+			if(comp[1] == '0'):
+				no = 0
+			else:
+				query += " AND clientes."+comp[0] + " = "+comp[1]
+		else:
+			if (comp[1] == ''):
+				no = 0
+			else:
 				# Comparison type 1 corresponds to ==
 				# Comparison type 2 corresponds to !=
 				# Comparison type 3 corresponds to <
@@ -173,33 +204,39 @@ def listaClientes (conn, comparaciones):
 				# Comparison type 5 corresponds to >
 				# Comparison type 6 corresponds to >=
 
-                signo = ""
-                if(comp[2] == '1'):
-                    signo = "="
-                elif(comp[2] == '2'):
-                    signo = "!="
-                elif(comp[2] == '3'):
-                    signo = "<"
-                elif(comp[2] == '4'):
-                    signo = "<="
-                elif(comp[2] == '5'):
-                    signo = ">"
-                elif(comp[2] == '6'):
-                    signo = ">="
-                elif(comp[2] == '7'):
-                    signo = " LIKE "
+				signo = ""
+				if(comp[2] == '1'):
+					signo = "="
+				elif(comp[2] == '2'):
+					signo = "!="
+				elif(comp[2] == '3'):
+					signo = "<"
+				elif(comp[2] == '4'):
+					signo = "<="
+				elif(comp[2] == '5'):
+					signo = ">"
+				elif(comp[2] == '6'):
+					signo = ">="
+				elif(comp[2] == '7'):
+					signo = " LIKE "
+				
+				if(comp[0] in camposFijos):
+					if(signo == " LIKE "):
+						query += " AND clientes."+comp[0] + signo +" '%"+ comp[1]+"%' "
+					else:
+						query += " AND clientes."+comp[0] + signo + comp[1]
+				else:
+					if(signo == " LIKE "):
+						query += " AND nc.campo = '"+comp[0]+"' AND nvc.valor " + signo +" '%"+ comp[1]+"%' "
+					else:
+						query += " AND LOWER(nc.campo) = '"+comp[0]+"' AND nvc.valor " + signo + "'"+comp[1]+"'"
 
-                if(signo == " LIKE "):
-                    query += " AND clientes."+comp[0] + signo +" '%"+ comp[1]+"%' "
-                else:
-                    query += " AND clientes."+comp[0] + signo + comp[1]
+	query +=";"
+	print query
+	cursor.execute(query)
 
-    query +=";"
-    print query
-    cursor.execute(query)
-
-    records = cursor.fetchall()
-    return records
+	records = cursor.fetchall()
+	return records
 
 
 def nuevoCampo(conn, campo, tipo):
@@ -241,3 +278,16 @@ def listaCampos (conn):
 
     records = cursor.fetchall()
     return records
+	
+
+def dataNuevosCampos (conn, cliente):
+    cursor = conn.cursor()
+    query  = "SELECT campo, valor FROM nuevos_campos nc, valores_nuevos_campos vnc "
+    query += " WHERE nc.id_campo = vnc.id_campo AND id_cliente = "+str(cliente)
+
+    query +=";"
+    cursor.execute(query)
+
+    records = cursor.fetchall()
+    return records
+	

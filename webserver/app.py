@@ -173,6 +173,8 @@ def searchCustomerResults():
 	campos.append({'fieldName': "Apellido", 'fieldType': "text"})
 
 	campos.append({'fieldName': "Fecha Inicio", 'fieldType': "date"})
+	campos.append({'fieldName': "Domicilio", 'fieldType': "text"})
+	campos.append({'fieldName': "Correo", 'fieldType': "text"})
 	campos.append({'fieldName': "NIT", 'fieldType': "text"})
 	campos.append({'fieldName': "Pago Total", 'fieldType': "text"})
 
@@ -182,6 +184,7 @@ def searchCustomerResults():
 	campos.append({'fieldName': "Tipo Cliente", 'fieldType': "text"})
 
 	data = funciones.listaClientes(conn, camposComparar)
+	
 
 	filas = []
 	for dat in data:
@@ -190,10 +193,21 @@ def searchCustomerResults():
 		for valor in dat:
                         # The last one is the id
                         if isID == len(dat):
-                            fila.append({'id': valor})
+                            
+							nuevaData = funciones.dataNuevosCampos(conn, valor)
+							for nuevoValor in nuevaData:
+								if not(({'fieldName': nuevoValor[0], 'fieldType': "text"} ) in campos):
+									campos.append({'fieldName': nuevoValor[0], 'fieldType': "text"})
+								fila.append({'valor': nuevoValor[1]})
+							
+							fila.append({'id': valor})
+							
                         else:
 							fila.append({'valor': valor})
                         isID += 1
+		
+		
+		
 		filas.append(fila)
 
 
@@ -267,6 +281,13 @@ def delete(client_id):
     funciones.eliminarCliente(conn, client_id)
 
     return render_template('deleteProfile.html')
+	
+	
+@app.route('/deleteCampo/<campo_id>', methods=['POST'])
+def deleteCampo(campo_id):
+    funciones.eliminarCampo(conn, campo_id)
+
+    return render_template('Fields.html')
 
 @app.route('/images/<image_name>', methods=['GET'])
 def image(image_name):
