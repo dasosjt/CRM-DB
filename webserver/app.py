@@ -210,9 +210,9 @@ def searchCustomerResults():
 		
 		
 		filas.append(fila)
+	num_resultados = len(filas)
 
-
-	return render_template('searchCustomerResults.html' , campos = campos, filas = filas)
+	return render_template('searchCustomerResults.html' , campos = campos, filas = filas, num_resultados = num_resultados)
 
 	
 	
