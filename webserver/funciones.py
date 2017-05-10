@@ -63,11 +63,7 @@ def InsertarCliente(conn, valores, campos):
 	camposFijos.append("estado")
 	camposFijos.append("tipo_cliente")
 	camposFijos.append("usuario_twitter")
-<<<<<<< HEAD
 	camposFijos.append("imagen_de_perfil")
-=======
-        camposFijos.append("imagen_de_perfil")
->>>>>>> 48dcc1c0e4631256755feb55a0457c88c625cb3e
 
 	cursor.execute("SELECT * FROM clientes ORDER BY id_cliente;")
 	records = cursor.fetchall()
@@ -172,7 +168,7 @@ def listaColumnas(conn, id):
 
         columns = []
 
-<<<<<<< HEAD
+
         for data in primaryColumns:
             for dat in data:
                 if dat != 'id_cliente' and dat != 'imagen_de_perfil':
@@ -180,7 +176,7 @@ def listaColumnas(conn, id):
        # for data in secondaryColumns:
         #    for dat in data:
         #        columns.append({'fieldName': renombrarColumns(dat)})
-=======
+
         columns.append({'fieldName': 'Nombre'})
         columns.append({'fieldName': 'Usuario Twitter'})
         columns.append({'fieldName': 'Apellido'})
@@ -201,7 +197,7 @@ def listaColumnas(conn, id):
                 for dat in data:
                     if(dat):
                         columns.append({'fieldName': renombrarColumns(dat)})
->>>>>>> 48dcc1c0e4631256755feb55a0457c88c625cb3e
+
 
         return columns
 
@@ -271,15 +267,30 @@ def listaClientes (conn, comparaciones):
 	camposFijos.append("tipo_cliente")
 	camposFijos.append("usuario_twitter")
 	
-	
-	query  = "SELECT DISTINCT nombre, apellido, fecha_inicio, domicilio, correo, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
-	query += " FROM clientes, oficinas, estados, contratos, tipos_cliente, nuevos_campos nc, valores_nuevos_campos nvc "
-	query += " WHERE contrato = id_tipo_contrato "
-	query += " AND oficina = id_oficina "
-	query += " AND clientes.estado = id_estado_cliente "
-	query += " AND clientes.tipo_cliente = tipos_cliente.id_tipo_cliente"
-	query += " AND nvc.id_cliente = clientes.id_cliente"
-	query += " AND nvc.id_campo = nc.id_campo"
+	query_nc = "SELECT * "
+	query_nc += "FROM nuevos_campos ;"
+
+	cursor.execute(query_nc)
+
+	records = cursor.fetchall()
+
+	if(len(records) == 0):
+		query  = "SELECT DISTINCT nombre, apellido, fecha_inicio, domicilio, correo, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
+		query += " FROM clientes, oficinas, estados, contratos, tipos_cliente "
+		query += " WHERE contrato = id_tipo_contrato "
+		query += " AND oficina = id_oficina "
+		query += " AND clientes.estado = id_estado_cliente "
+		query += " AND clientes.tipo_cliente = tipos_cliente.id_tipo_cliente"
+		
+	else:	
+		query  = "SELECT DISTINCT nombre, apellido, fecha_inicio, domicilio, correo, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
+		query += " FROM clientes, oficinas, estados, contratos, tipos_cliente, nuevos_campos nc, valores_nuevos_campos nvc "
+		query += " WHERE contrato = id_tipo_contrato "
+		query += " AND oficina = id_oficina "
+		query += " AND clientes.estado = id_estado_cliente "
+		query += " AND clientes.tipo_cliente = tipos_cliente.id_tipo_cliente"
+		query += " AND nvc.id_cliente = clientes.id_cliente"
+		query += " AND nvc.id_campo = nc.id_campo"
 
 	for comp in comparaciones:
 		if((comp[0] == 'oficina') or (comp[0] == 'contrato') or (comp[0] == 'estado') or (comp[0] == 'tipo_cliente')):
@@ -318,7 +329,7 @@ def listaClientes (conn, comparaciones):
 					if(signo == " LIKE "):
 						query += " AND clientes."+comp[0] + signo +" '%"+ comp[1]+"%' "
 					else:
-						query += " AND clientes."+comp[0] + signo + comp[1]
+						query += " AND clientes."+comp[0] + signo + " '"+comp[1]+"'"
 				else:
 					if(signo == " LIKE "):
 						query += " AND nc.campo = '"+comp[0]+"' AND nvc.valor " + signo +" '%"+ comp[1]+"%' "
