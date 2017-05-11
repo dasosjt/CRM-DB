@@ -15,33 +15,77 @@
 							{% if fillableField['fieldName'] == "oficina" %}
 								<div class="input-field col s12">
 									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
-										<option value="1">Zona 10 Guatemala</option>
-										<option value="2">Zona 14 Guatemala</option>
-										<option value="3">Zona 16 Guatemala</option>
+										{% if fillableField['fieldValue'] == 1%}
+											<option value="1" selected = 'selected'>Zona 10 Guatemala</option>
+											<option value="2">Zona 14 Guatemala</option>
+											<option value="3">Zona 16 Guatemala</option>
+										{% elif fillableField['fieldValue'] == 2%}
+											<option value="1">Zona 10 Guatemala</option>
+											<option value="2" selected = 'selected'>Zona 14 Guatemala</option>
+											<option value="3">Zona 16 Guatemala</option>
+										{% else %}
+											<option value="1">Zona 10 Guatemala</option>
+											<option value="2">Zona 14 Guatemala</option>
+											<option value="3" selected = 'selected'>Zona 16 Guatemala</option>
+										{% endif %}
+
 									</select>
 									<label>Oficina</label>
 								</div>
 							{% elif fillableField['fieldName'] == "contrato" %}
 								<div class="input-field col s12">
 									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
-										<option value="1">Anual</option>
-										<option value="2">Mensual</option>
-										<option value="3">Permanente</option>
+										{% if fillableField['fieldValue'] == 1%}
+											<option value="1" selected = 'selected'>Anual</option>
+											<option value="2">Mensual</option>
+											<option value="3">Permanente</option>
+										{% elif fillableField['fieldValue'] == 2%}
+											<option value="1">Anual</option>
+											<option value="2" selected = 'selected'>Mensual</option>
+											<option value="3">Permanente</option>
+										{% else %}
+											<option value="1">Anual</option>
+											<option value="2">Mensual</option>
+											<option value="3" selected = 'selected'>Permanente</option>
+										{% endif %}
 									</select>
 									<label>Contrato</label>
 								</div>
 							{% elif fillableField['fieldName'] == "estado" %}
 								<div class="input-field col s12">
 									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
-										<option value="1">Activo</option>
-										<option value="2">Inactivo</option>
-										<option value="3">Terminado</option>
+										{% if fillableField['fieldValue'] == 1%}
+											<option value="1" selected = 'selected'>Activo</option>
+											<option value="2">Inactivo</option>
+											<option value="3">Terminado</option>
+										{% elif fillableField['fieldValue'] == 2%}
+											<option value="1">Activo</option>
+											<option value="2" selected = 'selected'>Inactivo</option>
+											<option value="3">Terminado</option>
+										{% else %}
+											<option value="1">Activo</option>
+											<option value="2">Inactivo</option>
+											<option value="3" selected = 'selected'>Terminado</option>
+										{% endif %}
 									</select>
 									<label>Estado</label>
 								</div>
 							{% elif fillableField['fieldName'] == "tipo_cliente" %}
 								<div class="input-field col s12">
 									<select id="{{fillableField['fieldName']}}" name="{{fillableField['fieldName']}}">
+										{% if fillableField['fieldValue'] == 1%}
+											<option value="1" selected = 'selected'>Regular</option>
+											<option value="2">Familiar</option>
+											<option value="3">Asociado</option>
+										{% elif fillableField['fieldValue'] == 2%}
+											<option value="1">Regular</option>
+											<option value="2" selected = 'selected'>Familiar</option>
+											<option value="3">Asociado</option>
+										{% else %}
+											<option value="1">Regular</option>
+											<option value="2">Familiar</option>
+											<option value="3" selected = 'selected'>Asociado</option>
+										{% endif %}
 										<option value="1">Regular</option>
 										<option value="2">Familiar</option>
 										<option value="3">Asociado</option>
@@ -50,7 +94,7 @@
 								</div>
 							{% else %}
 								<div class="input-field col s12">
-									<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}" required>
+									<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}" placeholder = {{fillableField['fieldValue']}}>
 									<label for="{{fillableField['fieldName']}}">{{fillableField['fieldName']}}</label>
 									
 								</div>

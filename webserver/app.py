@@ -322,34 +322,35 @@ def profile(client_id):
 @app.route('/edit/<client_id>', methods=['GET', 'POST'])
 def edit(client_id):
     if request.method == 'GET':
-        fillableFields = [{'fieldName': "Nombre", 'fieldType': "text"}]
-        fillableFields.append({'fieldName': "Apellido", 'fieldType': "text"})
-        fillableFields.append({'fieldName': "Fecha Inicio", 'fieldType': "date"})
-        fillableFields.append({'fieldName': "Domicilio", 'fieldType': "text"})
-        fillableFields.append({'fieldName': "Correo", 'fieldType': "text"})
-        fillableFields.append({'fieldName': "NIT", 'fieldType': "text"})
+        fillableFields = [{'fieldName': "Nombre", 'fieldType': "text", 'fieldValue': funciones.getInfo(conn, "nombre", client_id)}]
+        fillableFields.append({'fieldName': "Apellido", 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, "apellido", client_id)})
+        fillableFields.append({'fieldName': "Fecha Inicio", 'fieldType': "date", 'fieldValue' : funciones.getInfo(conn, "fecha_inicio", client_id)})
+        fillableFields.append({'fieldName': "Domicilio", 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, "domicilio", client_id)})
+        fillableFields.append({'fieldName': "Correo", 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, "correo", client_id)})
+        fillableFields.append({'fieldName': "NIT", 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, "nit", client_id)})
 
-        fillableFields.append({'fieldName': "oficina", 'fieldType': "text"})
-        fillableFields.append({'fieldName': "contrato", 'fieldType': "text"})
-        fillableFields.append({'fieldName': "estado", 'fieldType': "text"})
-        fillableFields.append({'fieldName': "tipo_cliente", 'fieldType': "text"})
-        fillableFields.append({'fieldName': "Usuario Twitter", 'fieldType': "text"})
-        fillableFields.append({'fieldName': "Imagen de Perfil", 'fieldType': "file"})
+        fillableFields.append({'fieldName': "oficina", 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, "oficina", client_id)})
+        fillableFields.append({'fieldName': "contrato", 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, "contrato", client_id)})
+        fillableFields.append({'fieldName': "estado", 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, "estado", client_id)})
+        fillableFields.append({'fieldName': "tipo_cliente", 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, "tipo_cliente", client_id)})
+        fillableFields.append({'fieldName': "Usuario Twitter", 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, "usuario_twitter", client_id)})
+        fillableFields.append({'fieldName': "Imagen de Perfil", 'fieldType': "file", 'fieldValue' : funciones.getInfo(conn, "imagen_de_perfil", client_id)})
 
         cursor = conn.cursor()
         cursor.execute("Select * FROM nuevos_campos")
         records = cursor.fetchall()
         for campo in records:
                 if(campo[2] == "texto"):
-                        fillableFields.append({'fieldName': campo[1], 'fieldType': "text"})
+                    fillableFields.append({'fieldName': campo[1], 'fieldType': "text", 'fieldValue' : funciones.getInfo(conn, str(campo[1]), client_id)})
                 elif(campo[2] == "entero"):
-                        fillableFields.append({'fieldName': campo[1], 'fieldType': "number"})
+                    fillableFields.append({'fieldName': campo[1], 'fieldType': "number", 'fieldValue' : funciones.getInfo(conn, str(campo[1]), client_id)})
                 elif(campo[2] == "decimal"):
-                        fillableFields.append({'fieldName': campo[1], 'fieldType': "number"})
+                    fillableFields.append({'fieldName': campo[1], 'fieldType': "number", 'fieldValue' : funciones.getInfo(conn, str(campo[1]), client_id)})
                 elif(campo[2] == "fecha"):
-                        fillableFields.append({'fieldName': campo[1], 'fieldType': "date"})
+                    fillableFields.append({'fieldName': campo[1], 'fieldType': "date", 'fieldValue' : funciones.getInfo(conn, str(campo[1]), client_id)})
 
         return render_template('editProfile.html', fillableFields=fillableFields, client_id = client_id)
+    
     elif request.method == 'POST':		
         # Processing the insert
 	valores = []
@@ -398,9 +399,21 @@ def image(image_name):
 
 @app.route('/reports', methods=['GET'])
 def reports():
-    label1, y1 = funciones.reporte(conn, "oficina")
-    print(label1)
-    print(y1)
+    label_oficina, y_oficina = funciones.reporteCatalogo(conn, "oficina")
+    label_contrato, y_contrato = funciones.reporteCatalogo(conn, "contrato")
+    label_estado, y_estado = funciones.reporteCatalogo(conn, "estado")
+    label_tipo, y_tipo = funciones.reporteCatalogo(conn, "tipo_cliente")
+    info_ano = funciones.reporteTiempo(conn, "ano")
+    info_mes = funciones.reporteTiempo(conn, "mes")
+
+
+    data = []
+    data.append({"label_oficina": label_oficina, "y_oficina": y_oficina})
+    data.append({"label_contrato": label_contrato, "y_contrato": y_contrato})
+    data.append({"label_estado": label_estado, "y_estado": y_estado})
+    data.append({"label_tipo": label_tipo, "y_tipo": y_tipo})
+
+    return render_template('reports.html', data = data, info_ano = info_ano, info_mes = info_mes )
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=True, port=8080)
