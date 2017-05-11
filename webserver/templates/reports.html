@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block pageTitle %}Reporte{%endblock%}
+{% block pageContent %}
+<script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script type="text/javascript">
+
+function oficina(){
+	var chart = new CanvasJS.Chart("Oficina", {
+		theme: "theme4",//theme1
+		title:{
+			text: "Cantidad de Personas por Oficina"
+		},
+		animationEnabled: true,   // change to true
+		data: [
+		{
+			// Change type to "bar", "area", "spline", "pie",etc.
+			type: "pie",
+			dataPoints: [
+				{ label: "{{data[0]['label_oficina'][0]}}", y: {{data[0]['y_oficina'][0]}} },
+				{ label: "{{data[0]['label_oficina'][1]}}", y: {{data[0]['y_oficina'][1]}} },
+				{ label: "{{data[0]['label_oficina'][2]}}", y: {{data[0]['y_oficina'][2]}} }
+			]
+		}
+		]
+	});
+	chart.render();
+}
+
+function contrato() {
+	var chart = new CanvasJS.Chart("Contrato", {
+		theme: "theme4",//theme1
+		title:{
+			text: "Cantidad de Personas por Contrato"
+		},
+		animationEnabled: true,   // change to true
+		data: [
+		{
+			// Change type to "bar", "area", "spline", "pie",etc.
+			type: "pie",
+			dataPoints: [
+				{ label: "{{data[1]['label_contrato'][0]}}", y: {{data[1]['y_contrato'][0]}} },
+				{ label: "{{data[1]['label_contrato'][1]}}", y: {{data[1]['y_contrato'][1]}} },
+				{ label: "{{data[1]['label_contrato'][2]}}", y: {{data[1]['y_contrato'][2]}} }
+			]
+		}
+		]
+	});
+	chart.render();
+}
+
+function estado() {
+	var chart = new CanvasJS.Chart("Estado", {
+		theme: "theme4",//theme1
+		title:{
+			text: "Cantidad de Personas por Estado"
+		},
+		animationEnabled: true,   // change to true
+		data: [
+		{
+			// Change type to "bar", "area", "spline", "pie",etc.
+			type: "pie",
+			dataPoints: [
+				{ label: "{{data[2]['label_estado'][0]}}", y: {{data[2]['y_estado'][0]}} },
+				{ label: "{{data[2]['label_estado'][1]}}", y: {{data[2]['y_estado'][1]}} },
+				{ label: "{{data[2]['label_estado'][2]}}", y: {{data[2]['y_estado'][2]}} }
+			]
+		}
+		]
+	});
+	chart.render();
+}
+
+function tipo() {
+	var chart = new CanvasJS.Chart("Tipo", {
+		theme: "theme4",//theme1
+		title:{
+			text: "Cantidad de Personas por Tipo"
+		},
+		animationEnabled: true,   // change to true
+		data: [
+		{
+			// Change type to "bar", "area", "spline", "pie",etc.
+			type: "pie",
+			dataPoints: [
+				{ label: "{{data[3]['label_tipo'][0]}}", y: {{data[3]['y_tipo'][0]}} },
+				{ label: "{{data[3]['label_tipo'][1]}}", y: {{data[3]['y_tipo'][1]}} },
+				{ label: "{{data[3]['label_tipo'][2]}}", y: {{data[3]['y_tipo'][2]}} }
+			]
+		}
+		]
+	});
+	chart.render();
+}
+
+
+{% if info_ano|length > 0 %}
+function ano() {
+	var chart = new CanvasJS.Chart("Ano", {
+		theme: "theme4",//theme1
+		title:{
+			text: "Cantidad de Personas por Año"
+		},
+		animationEnabled: true,   // change to true
+		data: [
+		{
+			// Change type to "bar", "area", "spline", "pie",etc.
+			type: "column",
+			dataPoints: [
+				{% for info in info_ano %}
+				{ label: "{{info['label']}}", y: {{ info['y'] }} },
+				{% endfor %}
+			]
+		}
+		]
+	});
+	chart.render();
+}
+{% endif %}
+
+{% if info_mes|length > 0 %}
+function mes() {
+	var chart = new CanvasJS.Chart("Mes", {
+		theme: "theme4",//theme1
+		title:{
+			text: "Cantidad de Personas por Mes"
+		},
+		animationEnabled: true,   // change to true
+		data: [
+		{
+			// Change type to "bar", "area", "spline", "pie",etc.
+			type: "column",
+			dataPoints: [
+				{% for info in info_mes %}
+				{ label: "{{info['label']}}", y: {{ info['y'] }} },
+				{% endfor %}
+			]
+		}
+		]
+	});
+	chart.render();
+}
+{% endif %}
+
+var addFunctionOnWindowLoad = function(callback){
+      if(window.addEventListener){
+          window.addEventListener('load',callback,false);
+      }else{
+          window.attachEvent('onload',callback);
+      }
+}
+
+addFunctionOnWindowLoad(oficina);
+addFunctionOnWindowLoad(contrato);
+addFunctionOnWindowLoad(estado);
+addFunctionOnWindowLoad(tipo);
+{% if info_ano|length > 0 %}
+addFunctionOnWindowLoad(ano);
+{% endif %}
+{% if info_mes|length > 0 %}
+addFunctionOnWindowLoad(mes);
+{% endif %}
+</script>
+</head>
+<body>
+<div id="Oficina" style="height: 300px; width: 80%; display: block; margin-left: auto; margin-right: auto; margin-top: 50px"></div>
+<div id="Contrato" style="height: 300px; width: 80%; display: block; margin-left: auto; margin-right: auto; margin-top: 50px"></div>
+<div id="Estado" style="height: 300px; width: 80%; display: block; margin-left: auto; margin-right: auto; margin-top: 50px"></div>
+<div id="Tipo" style="height: 300px; width: 80%; display: block; margin-left: auto; margin-right: auto; margin-top: 50px"></div>
+{% if info_ano|length > 0 %}
+<div id="Ano" style="height: 300px; width: 80%; display: block; margin-left: auto; margin-right: auto; margin-top: 50px"></div>
+{% endif %}
+{% if info_mes|length > 0 %}
+<div id="Mes" style="height: 300px; width: 80%; display: block; margin-left: auto; margin-right: auto; margin-top: 50px"></div>
+{% endif %}
+</body>
+{% endblock %}
