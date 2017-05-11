@@ -1,4 +1,4 @@
-def reporte(conn, columna):
+def reporteCatalogo(conn, columna):
     cursor = conn.cursor()
 
     y = []
@@ -11,13 +11,11 @@ def reporte(conn, columna):
     else:
         label = ['Regular', 'Familiar', 'Asociado']
 
-    for i in range(1, 3):
-        query = "SELECT count("+columna+") FROM clientes WHERE "+columna+" = "+str(i)+";"
+    for i in range(1, 4):
+        query = "SELECT * FROM cant_"+columna+"_"+str(i)+";"
         cursor.execute(query)
-        temp = cursor.fetchall()
-        print(temp)
-        y.append(temp)
-
+        temp = cursor.fetchall()[0][0]
+        y.append(str(temp))
 
 
     conn.commit()
@@ -25,6 +23,74 @@ def reporte(conn, columna):
     return label, y
 
 
+def reporteTiempo(conn, tipo):
+    cursor = conn.cursor()
+
+    info = []
+
+    if(tipo == "ano"):
+        query = "SELECT * FROM cant_ano"
+    else:
+        query = "SELECT * FROM cant_mes"
+
+    cursor.execute(query)
+    data = cursor.fetchall()
+
+    current_date = ""
+
+    for dat in data:
+        date = True
+        for da in dat:
+            if date:
+                #label.append(da)
+                current_date = da
+                date = not date
+            else:
+                #y.append(da)
+                info.append({"label" : current_date, "y" : da})
+            
+    conn.commit()
+
+    return info
+
+def getInfo(conn, column, id):
+	cursor = conn.cursor()
+        
+        camposFijos = []
+	camposFijos.append("id_cliente")
+	camposFijos.append("nombre")
+	camposFijos.append("apellido")
+	camposFijos.append("fecha_inicio")
+	camposFijos.append("domicilio")
+	camposFijos.append("correo")
+	camposFijos.append("pago_total")
+	camposFijos.append("nit")
+	camposFijos.append("contrato")
+	camposFijos.append("oficina")
+	camposFijos.append("estado")
+	camposFijos.append("tipo_cliente")
+	camposFijos.append("usuario_twitter")
+        camposFijos.append("imagen_de_perfil")
+
+        query = ""
+
+        if column not in camposFijos:
+            id_query = "SELECT id_campo FROM nuevos_campos WHERE campo = '"+column+"';"
+            cursor.execute(id_query)
+            id_campo = cursor.fetchall()
+            query = "SELECT valor FROM valores_nuevos_campos WHERE id_cliente = "+str(id)+" AND id_campo = "+str(id_campo[0][0])+";"
+
+        else:
+            query = "SELECT "+column+" FROM clientes WHERE id_cliente = "+id+";"
+
+        cursor.execute(query)
+        value = cursor.fetchall()
+
+        #print(value[0][0])
+
+        return value[0][0]
+        
+            
 def eliminarCliente(conn, client_id):
     cursor = conn.cursor()
 
