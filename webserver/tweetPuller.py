@@ -1,4 +1,5 @@
 import tweepy
+import time, datetime
 from pymongo import MongoClient
 
 #Pretty print for dictionaries (Debugging)
@@ -29,6 +30,10 @@ def retrieveTweets():
 		#Check if tweet is already in the database
 		if(tweetCollection.find_one({'id':tweet.id}) == None):
 			#If it doesn't then insert it
+			tempDate = tweet._json['created_at']
+			unixTime = time.mktime(datetime.datetime.strptime(tempDate, "%a %b %d %H:%M:%S +0000 %Y").timetuple())
+			tweet._json['created_at'] = unixTime
+			tweet._json['showableDate'] = datetime.datetime.fromtimestamp(unixTime).strftime('A las %I:%M %p del %A %d de %B del %Y')
 			tweetCollection.insert_one(tweet._json)
 			insertedCount = insertedCount + 1
 			# print("####################################################################################NEW TWEET")

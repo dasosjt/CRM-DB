@@ -1,5 +1,6 @@
 import tweepy
 from pymongo import MongoClient
+import time, datetime
 
 #Pretty print for dictionaries (Debugging)
 # import pprint
@@ -43,4 +44,20 @@ def followUsername(username):
 	api.create_friendship(screen_name=username)
 
 def getTweets(username, **filter_parameters):
-	return tweetCollection.find({'user.screen_name':username})
+	query = {'user.screen_name':username}
+	for param in filter_parameters:
+		if param == 'afterDate':
+			if filter_parameters[param] != '':
+				print("Trying to convert date: "+filter_parameters[param])
+				tempDate = time.mktime(datetime.datetime.strptime(str(filter_parameters[param]), "%Y-%m-%d").timetuple())
+				query['created_at'] = {"$gt":tempDate}
+		elif param == 'beforeDate':
+			if filter_parameters[param] != '':
+				print("Trying to convert date: "+filter_parameters[param])
+				tempDate = time.mktime(datetime.datetime.strptime(str(filter_parameters[param]), "%Y-%m-%d").timetuple())
+				query['created_at'] = {"$lt":tempDate}
+		elif param == 'containingWord':
+			query['text'] = {"$regex":filter_parameters[param]}
+	print(query)
+
+	return tweetCollection.find(query)

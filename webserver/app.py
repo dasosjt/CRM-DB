@@ -296,6 +296,28 @@ def profile(client_id):
 
 		return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path, tweets=tweets)
 
+	elif request.method == 'POST':
+		#Relational data
+		columns  = funciones.listaColumnas(conn, client_id)
+		data = funciones.dataCliente(conn, client_id)
+		print("Data is type"+str(type(data)))
+		print("Columns is type"+str(type(columns)))
+		image_name = funciones.clienteIDImagen(conn, client_id)
+		image_path = "/images/"+image_name[0][0]
+
+		#Tweets
+		#Get username
+		username = data[columns.index({'fieldName':'Usuario Twitter'})]['value']
+
+		#Get filter parameters
+		containingWord = request.form['containingWord']
+		afterDate = request.form['afterDate']
+		beforeDate = request.form['beforeDate']
+
+		tweets = twitterModule.getTweets(username, containingWord=containingWord, afterDate=afterDate, beforeDate=beforeDate)
+
+		return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path, tweets=tweets)
+
 
 @app.route('/edit/<client_id>', methods=['GET', 'POST'])
 def edit(client_id):
