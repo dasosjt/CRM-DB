@@ -18,7 +18,7 @@ camposComparar = []
 
 @app.route('/')
 def homePage():
-	return render_template('base.html')
+	return redirect('/reports')
 
 @app.route('/newCustomer', methods=['GET','POST'])
 def newCustomer():
@@ -294,7 +294,7 @@ def profile(client_id):
 		username = data[columns.index({'fieldName':'Usuario Twitter'})]['value']
 		tweets = twitterModule.getTweets(username)
 
-		return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path, tweets=tweets)
+		return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path, username=username, tweets=tweets)
 
 	elif request.method == 'POST':
 		#Relational data
@@ -316,7 +316,7 @@ def profile(client_id):
 
 		tweets = twitterModule.getTweets(username, containingWord=containingWord, afterDate=afterDate, beforeDate=beforeDate)
 
-		return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path, tweets=tweets)
+		return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path, username=username, tweets=tweets)
 
 
 @app.route('/edit/<client_id>', methods=['GET', 'POST'])
@@ -414,6 +414,15 @@ def reports():
     data.append({"label_tipo": label_tipo, "y_tipo": y_tipo})
 
     return render_template('reports.html', data = data, info_ano = info_ano, info_mes = info_mes )
+
+@app.route('/twitterStats/<username>', methods=['GET'])
+def twitterStats(username):
+	dayStats, hourStats = twitterModule.getStats(username)
+	print(dayStats)
+	print(hourStats)
+	# return "This is the page for twitter stats for "+username
+	return render_template('twitterStats.html', dayStats=dayStats, hourStats=hourStats, username=username)
+
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=True, port=8080)

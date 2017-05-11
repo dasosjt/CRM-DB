@@ -22,26 +22,14 @@ auth.set_access_token('861773027394113537-yqc3Q2IENArtKmnGmW1MjMX9AgV9CE3', 'T8Z
 api = tweepy.API(auth)
 
 
-def retrieveTweets():
-	lastTweets = api.home_timeline(count=100)
-	insertedCount = 0
-
-	for tweet in lastTweets:
-		#Check if tweet is already in the database
-		if(tweetCollection.find_one({'id':tweet.id}) == None):
-			#If it doesn't then insert it
-			tweetCollection.insert_one(tweet._json)
-			insertedCount = insertedCount + 1
-			# print("####################################################################################NEW TWEET")
-			# pp.pprint(tweet._json)
-		#If it is then ignore it
-
-	# print("New tweets inserted: "+str(insertedCount))
-
-
 def followUsername(username):
 	print("Function called!")
+	#Follow the user for future tweet pulling
 	api.create_friendship(screen_name=username)
+
+def unfollowUsername(username):
+	api.destroy_friendship(screen_name=username)
+
 
 def getTweets(username, **filter_parameters):
 	query = {'user.screen_name':username}
@@ -58,6 +46,20 @@ def getTweets(username, **filter_parameters):
 				query['created_at'] = {"$lt":tempDate}
 		elif param == 'containingWord':
 			query['text'] = {"$regex":filter_parameters[param]}
-	print(query)
 
 	return tweetCollection.find(query)
+
+def getStats(username):
+	days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+	dayStats = []
+	for day in days:
+		tempResult = tweetCollection.find({'user.screen_name':username, 'dayDate':day}).count()
+		dayStats.append({'dayName':day, 'dayResult':tempResult})
+
+	hours = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
+	hourStats = []
+	for hour in hours:
+		tempResult = tweetCollection.find({'user.screen_name':username, 'hourDate':hour}).count()
+		hourStats.append({'dayName':hour, 'hourResult':tempResult})
+
+	return dayStats, hourStats

@@ -1,2 +1,7 @@
 # Compiled python
 *.pyc
+
+# Images
+*.jpg
+*.jpeg
+*.png

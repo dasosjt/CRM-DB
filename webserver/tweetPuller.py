@@ -34,6 +34,8 @@ def retrieveTweets():
 			unixTime = time.mktime(datetime.datetime.strptime(tempDate, "%a %b %d %H:%M:%S +0000 %Y").timetuple())
 			tweet._json['created_at'] = unixTime
 			tweet._json['showableDate'] = datetime.datetime.fromtimestamp(unixTime).strftime('A las %I:%M %p del %A %d de %B del %Y')
+			tweet._json['dayDate'] = datetime.datetime.fromtimestamp(unixTime).strftime('%A')
+			tweet._json['hourDate'] = datetime.datetime.fromtimestamp(unixTime).strftime('%H')
 			tweetCollection.insert_one(tweet._json)
 			insertedCount = insertedCount + 1
 			# print("####################################################################################NEW TWEET")

@@ -94,7 +94,7 @@
 								</div>
 							{% else %}
 								<div class="input-field col s12">
-									<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}" placeholder = {{fillableField['fieldValue']}}>
+									<input id="{{fillableField['fieldName']}}" type="{{fillableField['fieldType']}}" class="validate" name="{{fillableField['fieldName']}}" value = {{fillableField['fieldValue']}}>
 									<label for="{{fillableField['fieldName']}}">{{fillableField['fieldName']}}</label>
 									
 								</div>
@@ -116,13 +116,4 @@
 		</form>
 	</div>
 </div>
-
-<!-- 	<script>
-		$(document).ready(function(){
-			$('.datepicker').pickadate({
-				selectMonths: true, // Creates a dropdown to control month
-				selectYears: 100 // Creates a dropdown of 15 years to control year
-			});
-		});
-	</script> -->
 {% endblock %}

@@ -24,6 +24,16 @@
 		</table>
 
 		<!-- Twitter data -->
+		<!-- Twitter statistics -->
+		<form action="/twitterStats/{{username}}" method="GET">
+			<div class="center">
+				<button class="btn waves-effect waves-light blue" type="submit" name="action">
+					Estadisticas de Twitter
+					<i class="material-icons right">list</i>
+				</button>
+			</div>
+		</form>
+
 		<!-- Tweet filtering -->
 		<form class="col s12" action="/profile/{{client_id}}" method="POST" enctype="multipart/form-data">
 			<div class="row">

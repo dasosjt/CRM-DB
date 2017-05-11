@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block pageTitle %}Eliminación de cliente{%endblock%}
+
+{% block pageContent %}
+	<div class="container">
+
+		<div class="row">
+			<div class="col s12">
+				<div class="card-panel blue lighten-4">
+					<div id="dayChart" style="height: 300px; width: 100%;"></div>
+				</div>
+			</div>
+
+			<div class="col s12">
+				<div class="card-panel blue lighten-4">
+					<div id="hourChart" style="height: 300px; width: 100%;"></div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+	<script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<script type="text/javascript">
+		window.onload = function () {
+			var dayChart = new CanvasJS.Chart("dayChart",
+			{
+				title:{
+					text: "Tweets por dia - @{{username}}"    
+				},
+				animationEnabled: true,
+				axisY: {
+					title: "Tweets por dia"
+				},
+				legend: {
+					verticalAlign: "bottom",
+					horizontalAlign: "center"
+				},
+				theme: "theme4",
+				data: [
+					{
+						type: "column",  
+						showInLegend: true, 
+						legendMarkerColor: "grey",
+						legendText: "Tweets totales por dia",
+						dataPoints: [
+							{% for day in dayStats %}
+								{y: {{day['dayResult']}}, label: "{{day['dayName']}}"},
+							{% endfor %}
+						]
+					}
+				]
+			});
+
+			var hourChart = new CanvasJS.Chart("hourChart",
+			{
+				title:{
+					text: "Tweets por hora - @{{username}}"    
+				},
+				animationEnabled: true,
+				axisY: {
+					title: "Tweets por hora"
+				},
+				legend: {
+					verticalAlign: "bottom",
+					horizontalAlign: "center"
+				},
+				theme: "theme4",
+				data: [
+					{
+						type: "column",  
+						showInLegend: true, 
+						legendMarkerColor: "grey",
+						legendText: "Tweets totales por hora",
+						dataPoints: [
+							{% for hour in hourStats %}
+								{y: {{hour['hourResult']}}, label: "{{hour['hourName']}}"},
+							{% endfor %}
+						]
+					}
+				]
+			});
+
+			dayChart.render();
+			hourChart.render();
+
+
+		}
+	</script>
+{% endblock %}
