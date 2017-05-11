@@ -188,7 +188,7 @@ def searchCustomerResults():
         #Good because the columns are not dynamic
 	campos = [{'fieldName': "Nombre", 'fieldType': "text"}]
 	campos.append({'fieldName': "Apellido", 'fieldType': "text"})
-
+	campos.append({'fieldName': "Usuario Twitter", 'fieldType': 'text'})
 	campos.append({'fieldName': "Fecha Inicio", 'fieldType': "date"})
 	campos.append({'fieldName': "Domicilio", 'fieldType': "text"})
 	campos.append({'fieldName': "Correo", 'fieldType': "text"})

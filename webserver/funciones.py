@@ -329,7 +329,7 @@ def listaClientes (conn, comparaciones):
 	records = cursor.fetchall()
 
 	if(len(records) == 0):
-		query  = "SELECT DISTINCT nombre, apellido, fecha_inicio, domicilio, correo, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
+		query  = "SELECT DISTINCT nombre, apellido, usuario_twitter, fecha_inicio, domicilio, correo, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
 		query += " FROM clientes, oficinas, estados, contratos, tipos_cliente "
 		query += " WHERE contrato = id_tipo_contrato "
 		query += " AND oficina = id_oficina "
@@ -337,7 +337,7 @@ def listaClientes (conn, comparaciones):
 		query += " AND clientes.tipo_cliente = tipos_cliente.id_tipo_cliente"
 		
 	else:	
-		query  = "SELECT DISTINCT nombre, apellido, fecha_inicio, domicilio, correo, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
+		query  = "SELECT DISTINCT nombre, apellido, usuario_twitter, fecha_inicio, domicilio, correo, nit, pago_total, direccion, contratos.tipo, estados.estado, tipos_cliente.tipo, clientes.id_cliente "
 		query += " FROM clientes, oficinas, estados, contratos, tipos_cliente, nuevos_campos nc, valores_nuevos_campos nvc "
 		query += " WHERE contrato = id_tipo_contrato "
 		query += " AND oficina = id_oficina "
