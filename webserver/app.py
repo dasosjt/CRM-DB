@@ -1,4 +1,5 @@
 import os
+import twitterModule
 #from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = os.getcwd()+'/images/'
@@ -11,7 +12,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 import funciones
 import sys
 import psycopg2
-conn_string = "host='localhost' dbname='proyecto2' user='postgres' password=''"
+conn_string = "host='localhost' dbname='proyecto2' user='postgres' password='Gentoo12'"
 conn = psycopg2.connect(conn_string)
 camposComparar = []
 
@@ -60,8 +61,19 @@ def newCustomer():
 		campos = []
 		for field in request.form:
 			# For each field in the form
+			#Follow the user on Twitter
+			
+
 			if (field != 'action'):
 				#If the field isn't the submit button
+
+				if str(field) == "Usuario Twitter":
+					try:
+						print("Trying to follow user @"+str(request.form[field]))
+						twitterModule.followUsername(request.form[field])
+						print('User followed succesfully')
+					except:
+						print("Tweepy error, user maybe already followed.")
 
 				fieldName = field
 				fieldValue = request.form[field]
@@ -70,15 +82,19 @@ def newCustomer():
 
 				print(fieldName + " has to be inserted with val: " + fieldValue)
 
-                image_info = request.files['Imagen de Perfil']
-                # TODO When some client is deleted, notify server to delete the image name. Maybe a good trigger.
-                image_info.save(UPLOAD_FOLDER+image_info.filename)
 
-                campos.append("imagen_de_perfil")
-                #print(image_info.filename)
-                valores.append(image_info.filename)
+				
 
-                # Store to DB - Casting may be necessary, as all the data comes in unicode -R: The casting is done in postgres in the Insert
+				# Store to DB - Casting may be necessary, as all the data comes in unicode -R: The casting is done in postgres in the Insert
+
+		image_info = request.files['Imagen de Perfil']
+		# TODO When some client is deleted, notify server to delete the image name. Maybe a good trigger.
+		image_info.save(UPLOAD_FOLDER+image_info.filename)
+
+		campos.append("imagen_de_perfil")
+		#print(image_info.filename)
+		valores.append(image_info.filename)
+
 		print funciones.InsertarCliente(conn, valores, campos)
 		# Return success of fail feedback, and redirect user to a convenient view - TODO
 		return redirect('/')
@@ -262,14 +278,24 @@ def newField():
 
 
 
-@app.route('/profile/<client_id>', methods=['GET'])
+@app.route('/profile/<client_id>', methods=['GET', 'POST'])
 def profile(client_id):
-	columns  = funciones.listaColumnas(conn, client_id)
-	data = funciones.dataCliente(conn, client_id)
-	image_name = funciones.clienteIDImagen(conn, client_id)
-	image_path = "/images/"+image_name[0][0]
+	if request.method == 'GET':
+		#Relational data
+		columns  = funciones.listaColumnas(conn, client_id)
+		data = funciones.dataCliente(conn, client_id)
+		print("Data is type"+str(type(data)))
+		print("Columns is type"+str(type(columns)))
+		image_name = funciones.clienteIDImagen(conn, client_id)
+		image_path = "/images/"+image_name[0][0]
 
-	return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path)
+		#Tweets
+		#Get username
+		username = data[columns.index({'fieldName':'Usuario Twitter'})]['value']
+		tweets = twitterModule.getTweets(username)
+
+		return render_template('profile.html', client_id = client_id, columns = columns, line = data, image_path = image_path, tweets=tweets)
+
 
 @app.route('/edit/<client_id>', methods=['GET', 'POST'])
 def edit(client_id):

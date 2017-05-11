@@ -39,6 +39,7 @@ def retrieveTweets():
 
 
 def followUsername(username):
+	print("Function called!")
 	api.create_friendship(screen_name=username)
 
 def getTweets(username, **filter_parameters):

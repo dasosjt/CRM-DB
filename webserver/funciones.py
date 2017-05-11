@@ -63,11 +63,7 @@ def InsertarCliente(conn, valores, campos):
 	camposFijos.append("estado")
 	camposFijos.append("tipo_cliente")
 	camposFijos.append("usuario_twitter")
-<<<<<<< HEAD
 	camposFijos.append("imagen_de_perfil")
-=======
-        camposFijos.append("imagen_de_perfil")
->>>>>>> 48dcc1c0e4631256755feb55a0457c88c625cb3e
 
 	cursor.execute("SELECT * FROM clientes ORDER BY id_cliente;")
 	records = cursor.fetchall()
@@ -171,16 +167,6 @@ def listaColumnas(conn, id):
         conn.commit()
 
         columns = []
-
-<<<<<<< HEAD
-        for data in primaryColumns:
-            for dat in data:
-                if dat != 'id_cliente' and dat != 'imagen_de_perfil':
-	            columns.append({'fieldName': renombrarColumns(dat)})
-       # for data in secondaryColumns:
-        #    for dat in data:
-        #        columns.append({'fieldName': renombrarColumns(dat)})
-=======
         columns.append({'fieldName': 'Nombre'})
         columns.append({'fieldName': 'Usuario Twitter'})
         columns.append({'fieldName': 'Apellido'})
@@ -201,7 +187,6 @@ def listaColumnas(conn, id):
                 for dat in data:
                     if(dat):
                         columns.append({'fieldName': renombrarColumns(dat)})
->>>>>>> 48dcc1c0e4631256755feb55a0457c88c625cb3e
 
         return columns
 
