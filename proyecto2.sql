@@ -230,3 +230,73 @@ BEFORE DELETE ON nuevos_campos
 FOR EACH ROW
 EXECUTE PROCEDURE borrar_valores_nuevo_campo ();
 
+
+CREATE VIEW cant_oficina_1 AS
+    SELECT count('oficina')
+    FROM clientes
+    WHERE oficina = 1;
+
+CREATE VIEW cant_oficina_2 AS
+    SELECT count('oficina')
+    FROM clientes
+    WHERE oficina = 2;
+
+CREATE VIEW cant_oficina_3 AS
+    SELECT count('oficina')
+    FROM clientes
+    WHERE oficina = 3;
+
+CREATE VIEW cant_contrato_1 AS
+    SELECT count('contrato')
+    FROM clientes
+    WHERE contrato = 1;
+
+CREATE VIEW cant_contrato_2 AS
+    SELECT count('contrato')
+    FROM clientes
+    WHERE contrato = 2;
+
+CREATE VIEW cant_contrato_3 AS
+    SELECT count('contrato')
+    FROM clientes
+    WHERE contrato = 3;
+
+CREATE VIEW cant_estado_1 AS
+    SELECT count('estado')
+    FROM clientes
+    WHERE estado = 1;
+
+CREATE VIEW cant_estado_2 AS
+    SELECT count('estado')
+    FROM clientes
+    WHERE estado = 2;
+
+CREATE VIEW cant_estado_3 AS
+    SELECT count('estado')
+    FROM clientes
+    WHERE estado = 3;
+
+CREATE VIEW cant_tipo_cliente_1 AS
+    SELECT count('tipo_cliente')
+    FROM clientes
+    WHERE tipo_cliente = 1;
+
+CREATE VIEW cant_tipo_cliente_2 AS
+    SELECT count('tipo_cliente')
+    FROM clientes
+    WHERE tipo_cliente = 3;
+
+CREATE VIEW cant_tipo_cliente_3 AS
+    SELECT count('oficina')
+    FROM clientes
+    WHERE tipo_cliente = 3;
+
+CREATE VIEW cant_mes as
+SELECT date_trunc('month', fecha_inicio) as mes, count(*)
+FROM clientes
+GROUP BY mes;
+
+CREATE VIEW cant_ano as
+SELECT date_trunc('year', fecha_inicio) as año, count(*)
+FROM clientes
+GROUP BY año;
